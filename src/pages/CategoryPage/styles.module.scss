@@ -1,0 +1,16 @@
+@use '../../styles/variables';
+
+.categoryPage {
+  h2 {
+    margin-top: 0;
+    color: variables.$dark-color;
+  }
+
+  .error {
+    background: variables.$danger-color;
+    color: variables.$white;
+    padding: variables.$spacing-md;
+    border-radius: variables.$border-radius;
+    margin-bottom: variables.$spacing-lg;
+  }
+}

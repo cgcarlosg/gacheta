@@ -1,0 +1,88 @@
+@use '../../styles/variables';
+@use '../../styles/mixins';
+
+.businessCard {
+  background: variables.$white;
+  border-radius: variables.$border-radius;
+  box-shadow: variables.$shadow;
+  overflow: hidden;
+  transition: variables.$transition;
+  cursor: pointer;
+  text-decoration: none;
+  display: block;
+  color: inherit;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: variables.$shadow-hover;
+  }
+
+  .image {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+  }
+
+  .content {
+    padding: variables.$spacing-md;
+  }
+
+  .name {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: variables.$spacing-sm;
+    color: variables.$dark-color;
+  }
+
+  .category {
+    color: variables.$primary-color;
+    font-weight: 500;
+    margin-bottom: variables.$spacing-sm;
+  }
+
+  .rating {
+    display: flex;
+    align-items: center;
+    margin-bottom: variables.$spacing-sm;
+
+    .stars {
+      margin-right: variables.$spacing-sm;
+
+      span {
+        color: variables.$light-color;
+        font-size: 1rem;
+
+        &.filled {
+          color: variables.$warning-color;
+        }
+      }
+    }
+
+    .reviews {
+      color: variables.$secondary-color;
+      font-size: 0.875rem;
+    }
+  }
+
+  .address {
+    color: variables.$secondary-color;
+    font-size: 0.875rem;
+    margin-bottom: variables.$spacing-sm;
+  }
+
+  .description {
+    color: variables.$dark-color;
+    font-size: 0.875rem;
+    line-height: 1.4;
+  }
+
+  @include mixins.mobile {
+    .image {
+      height: 150px;
+    }
+
+    .content {
+      padding: variables.$spacing-sm;
+    }
+  }
+}

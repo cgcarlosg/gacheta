@@ -1,0 +1,112 @@
+@use '../../styles/variables';
+@use '../../styles/mixins';
+
+.chatWidget {
+  position: fixed;
+  bottom: variables.$spacing-lg;
+  right: variables.$spacing-lg;
+  z-index: 1000;
+
+  .chatButton {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: variables.$primary-color;
+    color: variables.$white;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    box-shadow: variables.$shadow;
+    transition: variables.$transition;
+
+    &:hover {
+      transform: scale(1.1);
+    }
+  }
+
+  .chatWindow {
+    width: 350px;
+    height: 500px;
+    background: variables.$white;
+    border-radius: variables.$border-radius;
+    box-shadow: variables.$shadow-hover;
+    display: flex;
+    flex-direction: column;
+
+    @include mixins.mobile {
+      width: 90vw;
+      height: 70vh;
+    }
+
+    .chatHeader {
+      padding: variables.$spacing-md;
+      background: variables.$primary-color;
+      color: variables.$white;
+      border-radius: variables.$border-radius variables.$border-radius 0 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+
+      h4 {
+        margin: 0;
+      }
+
+      button {
+        background: none;
+        border: none;
+        color: variables.$white;
+        font-size: 1.5rem;
+        cursor: pointer;
+      }
+    }
+
+    .messages {
+      flex: 1;
+      padding: variables.$spacing-md;
+      overflow-y: auto;
+
+      .message {
+        margin-bottom: variables.$spacing-sm;
+        padding: variables.$spacing-sm;
+        border-radius: variables.$border-radius;
+        max-width: 80%;
+
+        &.user {
+          background: variables.$primary-color;
+          color: variables.$white;
+          align-self: flex-end;
+          margin-left: auto;
+        }
+
+        &.ai {
+          background: variables.$light-color;
+          color: variables.$dark-color;
+        }
+      }
+
+      .typing {
+        font-style: italic;
+        color: variables.$secondary-color;
+      }
+    }
+
+    .inputArea {
+      padding: variables.$spacing-md;
+      border-top: 1px solid variables.$light-color;
+      display: flex;
+
+      .input {
+        flex: 1;
+        padding: variables.$spacing-sm;
+        border: 1px solid variables.$light-color;
+        border-radius: variables.$border-radius;
+        margin-right: variables.$spacing-sm;
+      }
+
+      .sendButton {
+        @include mixins.button;
+        padding: variables.$spacing-sm variables.$spacing-md;
+      }
+    }
+  }
+}

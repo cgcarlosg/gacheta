@@ -1,0 +1,130 @@
+@use "sass:color";
+@use '../../styles/variables';
+@use '../../styles/mixins';
+
+.filterSidebar {
+  background: variables.$white;
+  padding: variables.$spacing-lg;
+  border-radius: variables.$border-radius;
+  box-shadow: variables.$shadow;
+  color: variables.$dark-color;
+
+  h3 {
+    margin-top: 0;
+    margin-bottom: variables.$spacing-md;
+    color: variables.$dark-color;
+  }
+
+  .clearButton {
+    @include mixins.button;
+    background: variables.$secondary-color;
+    border-color: variables.$secondary-color;
+    margin-bottom: variables.$spacing-lg;
+
+    &:hover {
+      background: color.adjust(variables.$secondary-color, $lightness: -7.5%);
+    }
+  }
+
+  .filterGroup {
+    margin-bottom: variables.$spacing-lg;
+
+    h4 {
+      margin-bottom: variables.$spacing-sm;
+      color: variables.$dark-color;
+      font-size: 1rem;
+    }
+
+    .checkboxLabel {
+      display: block;
+      margin-bottom: variables.$spacing-xs;
+      cursor: pointer;
+
+      input {
+        margin-right: variables.$spacing-sm;
+      }
+    }
+  }
+
+  .accordionHeader {
+    width: 100%;
+    background: none;
+    border: 1px solid variables.$light-color;
+    border-radius: variables.$border-radius;
+    padding: variables.$spacing-md;
+    text-align: left;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: variables.$transition;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: variables.$spacing-sm;
+    color: variables.$dark-color;
+
+    &:hover {
+      background: variables.$light-color;
+    }
+
+    &.active {
+      border-color: variables.$primary-color;
+      background: rgba(variables.$primary-color, 0.05);
+    }
+
+    .activeIndicator {
+      color: variables.$primary-color;
+      font-size: 0.8rem;
+    }
+  }
+
+  .accordionContent {
+    padding: variables.$spacing-md;
+    border: 1px solid variables.$light-color;
+    border-radius: variables.$border-radius;
+    background: variables.$white;
+    margin-bottom: variables.$spacing-md;
+
+    .checkboxLabel {
+      display: block;
+      margin-bottom: variables.$spacing-sm;
+      cursor: pointer;
+      color: variables.$dark-color;
+
+      input {
+        margin-right: variables.$spacing-sm;
+      }
+    }
+  }
+
+  .mobileActions {
+    display: flex;
+    flex-direction: column;
+    gap: variables.$spacing-md;
+    margin-top: variables.$spacing-lg;
+    padding-top: variables.$spacing-lg;
+    border-top: 1px solid variables.$light-color;
+
+    .clearButton {
+      width: 100%;
+      @include mixins.button;
+      background: variables.$secondary-color;
+      border-color: variables.$secondary-color;
+
+      &:hover {
+        background: color.adjust(variables.$secondary-color, $lightness: -7.5%);
+      }
+    }
+
+    .applyButton {
+      width: 100%;
+      @include mixins.button;
+      background: variables.$primary-color;
+      border-color: variables.$primary-color;
+
+      &:hover {
+        background: color.adjust(variables.$primary-color, $lightness: -7.5%);
+      }
+    }
+  }
+}

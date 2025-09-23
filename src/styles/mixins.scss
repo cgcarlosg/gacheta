@@ -1,0 +1,59 @@
+@use "sass:color";
+@use 'variables';
+
+@mixin mobile {
+  @media (max-width: #{variables.$mobile - 1}) {
+    @content;
+  }
+}
+
+@mixin tablet {
+  @media (min-width: #{variables.$mobile}) and (max-width: #{variables.$tablet - 1}) {
+    @content;
+  }
+}
+
+@mixin desktop {
+  @media (min-width: #{variables.$tablet}) {
+    @content;
+  }
+}
+
+@mixin large {
+  @media (min-width: #{variables.$large}) {
+    @content;
+  }
+}
+
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin button {
+  display: inline-block;
+  font-weight: 400;
+  color: variables.$white;
+  text-align: center;
+  vertical-align: middle;
+  user-select: none;
+  background-color: variables.$primary-color;
+  border: 1px solid variables.$primary-color;
+  padding: variables.$spacing-sm variables.$spacing-md;
+  font-size: 1rem;
+  line-height: 1.5;
+  border-radius: variables.$border-radius;
+  transition: variables.$transition;
+  cursor: pointer;
+
+  &:hover {
+    background-color: color.adjust(variables.$primary-color, $lightness: -7.5%);
+    border-color: color.adjust(variables.$primary-color, $lightness: -10%);
+  }
+
+  &:focus {
+    outline: 0;
+    box-shadow: 0 0 0 0.2rem rgba(variables.$primary-color, 0.25);
+  }
+}

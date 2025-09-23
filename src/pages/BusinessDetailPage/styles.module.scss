@@ -1,0 +1,69 @@
+@use '../../styles/variables';
+@use '../../styles/mixins';
+
+.businessDetail {
+  .backButton {
+    display: inline-block;
+    margin-bottom: variables.$spacing-md;
+    color: variables.$primary-color;
+    text-decoration: none;
+    font-weight: 500;
+    padding: variables.$spacing-xs variables.$spacing-sm;
+    border-radius: variables.$border-radius;
+    transition: variables.$transition;
+
+    &:hover {
+      background-color: rgba(variables.$primary-color, 0.1);
+      text-decoration: none;
+    }
+  }
+
+  h2 {
+    color: variables.$dark-color;
+  }
+
+  .content {
+    display: flex;
+    gap: variables.$spacing-lg;
+
+    @include mixins.mobile {
+      flex-direction: column;
+    }
+
+    .info {
+      flex: 1;
+
+      .image {
+        width: 100%;
+        height: 300px;
+        object-fit: cover;
+        border-radius: variables.$border-radius;
+        margin-bottom: variables.$spacing-lg;
+      }
+
+      .details {
+        p {
+          margin-bottom: variables.$spacing-sm;
+        }
+      }
+
+      .hours {
+        margin-top: variables.$spacing-lg;
+
+        h3 {
+          margin-bottom: variables.$spacing-sm;
+        }
+
+        p {
+          margin-bottom: variables.$spacing-xs;
+        }
+      }
+    }
+
+    .map {
+      flex: 1;
+      border-radius: variables.$border-radius;
+      overflow: hidden;
+    }
+  }
+}

@@ -1,0 +1,127 @@
+@use '../../styles/variables';
+@use '../../styles/mixins';
+
+.layout {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+
+  .header {
+    background: variables.$primary-color;
+    color: variables.$white;
+    padding: variables.$spacing-lg;
+    text-align: center;
+
+    h1 {
+      margin: 0 0 variables.$spacing-md 0;
+    }
+
+    .headerControls {
+      display: flex;
+      flex-direction: column;
+      gap: variables.$spacing-md;
+      align-items: center;
+
+      @include mixins.tablet {
+        flex-direction: row;
+        justify-content: center;
+      }
+    }
+
+    .filterButton {
+      @include mixins.button;
+      background: rgba(variables.$white, 0.2);
+      border: 1px solid rgba(variables.$white, 0.3);
+      color: variables.$white;
+      display: block;
+
+      @include mixins.tablet {
+        display: none; // Hide on tablet and up
+      }
+
+      &:hover {
+        background: rgba(variables.$white, 0.3);
+        border-color: rgba(variables.$white, 0.4);
+      }
+    }
+  }
+
+  .container {
+    display: flex;
+    flex: 1;
+
+    .sidebar {
+      width: 300px;
+      padding: variables.$spacing-lg;
+      background: variables.$light-color;
+
+      @include mixins.mobile {
+        display: none; // Hide sidebar on mobile
+      }
+    }
+
+    .main {
+      flex: 1;
+      padding: variables.$spacing-lg;
+    }
+  }
+
+  .mobileFilterOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding-top: variables.$spacing-xl;
+
+    @include mixins.tablet {
+      display: none; // Hide overlay on tablet and up
+    }
+  }
+
+  .mobileFilterModal {
+    background: variables.$white;
+    border-radius: variables.$border-radius;
+    width: 90%;
+    max-width: 400px;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-shadow: variables.$shadow-hover;
+
+    .mobileFilterHeader {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: variables.$spacing-lg;
+      border-bottom: 1px solid variables.$light-color;
+
+      h3 {
+        margin: 0;
+        color: variables.$dark-color;
+      }
+
+      .closeButton {
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        cursor: pointer;
+        color: variables.$secondary-color;
+        padding: variables.$spacing-xs;
+        border-radius: variables.$border-radius;
+
+        &:hover {
+          background: variables.$light-color;
+        }
+      }
+    }
+
+    .mobileFilterContent {
+      padding: variables.$spacing-lg;
+    }
+  }
+}

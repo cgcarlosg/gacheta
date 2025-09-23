@@ -1,0 +1,21 @@
+@use '../../styles/variables';
+@use '../../styles/mixins';
+
+.searchBar {
+  margin-bottom: variables.$spacing-lg;
+
+  .input {
+    width: 100%;
+    padding: variables.$spacing-md;
+    border: 1px solid variables.$light-color;
+    border-radius: variables.$border-radius;
+    font-size: 1rem;
+    transition: variables.$transition;
+
+    &:focus {
+      outline: none;
+      border-color: variables.$primary-color;
+      box-shadow: 0 0 0 0.2rem rgba(variables.$primary-color, 0.25);
+    }
+  }
+}
