@@ -5,6 +5,7 @@
 .filterSidebar {
   background: variables.$white;
   padding: variables.$spacing-lg;
+  padding-top: 0;
   border-radius: variables.$border-radius;
   box-shadow: variables.$shadow;
   color: variables.$dark-color;
@@ -19,7 +20,7 @@
     @include mixins.button;
     background: variables.$secondary-color;
     border-color: variables.$secondary-color;
-    margin-bottom: variables.$spacing-lg;
+    margin-bottom: 0.5rem;
 
     &:hover {
       background: color.adjust(variables.$secondary-color, $lightness: -7.5%);
@@ -102,7 +103,7 @@
     flex-direction: column;
     gap: variables.$spacing-md;
     margin-top: variables.$spacing-lg;
-    padding-top: variables.$spacing-lg;
+    padding-top: 0;
     border-top: 1px solid variables.$light-color;
 
     .clearButton {
