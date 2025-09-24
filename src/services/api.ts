@@ -25,7 +25,6 @@ interface BusinessDBRow {
 }
 
 export const getBusinesses = async (filters?: FilterOptions): Promise<Business[]> => {
-  console.log('getBusinesses called with filters:', filters);
 
   let query = supabase.from('businesses').select('*');
 
@@ -48,10 +47,7 @@ export const getBusinesses = async (filters?: FilterOptions): Promise<Business[]
     }
   }
 
-  console.log('Executing Supabase query...');
   const { data, error } = await query;
-
-  console.log('Supabase response:', { data, error });
 
   if (error) {
     console.error('Supabase error:', error);
