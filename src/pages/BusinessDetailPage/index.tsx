@@ -5,7 +5,7 @@ import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import icon from '../../../public/assets/localization.png';
+import icon from '../../assets/localization.png';
 import type { Business } from '../../types/business';
 import styles from './styles.module.scss';
 
