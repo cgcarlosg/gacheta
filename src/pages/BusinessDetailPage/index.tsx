@@ -3,6 +3,9 @@ import { useParams, Link } from 'react-router-dom';
 import { useBusinesses } from '../../hooks/useBusinesses';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
+import L from 'leaflet';
+import 'leaflet/dist/leaflet.css';
+import icon from '../../../public/assets/localization.png';
 import type { Business } from '../../types/business';
 import styles from './styles.module.scss';
 
@@ -25,6 +28,13 @@ const BusinessDetailPage: React.FC = () => {
 
   if (loading) return <div>Loading...</div>;
   if (!business) return <div>Business not found</div>;
+
+  const customIcon = new L.Icon({
+  iconUrl: icon,
+  iconSize: [26, 35],
+  iconAnchor: [12, 35], 
+  popupAnchor: [0, -32],
+});
 
   return (
     <div className={styles.businessDetail}>
@@ -50,12 +60,12 @@ const BusinessDetailPage: React.FC = () => {
           </div>
         </div>
         <div className={styles.map}>
-          <MapContainer center={[business.latitude, business.longitude]} zoom={16} style={{ height: '400px', width: '100%' }}>
+          <MapContainer center={[business.latitude, business.longitude]} zoom={15} style={{ height: '400px', width: '100%' }}>
             <TileLayer
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
               attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
             />
-            <Marker position={[business.latitude, business.longitude]}>
+            <Marker position={[business.latitude, business.longitude]} icon={customIcon}>
               <Popup>{business.name}</Popup>
             </Marker>
           </MapContainer>
