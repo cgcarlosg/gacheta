@@ -2,6 +2,38 @@ export const formatRating = (rating: number): string => {
   return rating.toFixed(1);
 };
 
+export const isBusinessOpen = (hours: Record<string, string>): boolean => {
+  const now = new Date();
+  const dayOfWeek = now.toLocaleDateString('en-US', { weekday: 'long' });
+  const currentTime = now.getHours() * 60 + now.getMinutes(); // Minutes since midnight
+
+  console.log('Current day:', dayOfWeek, 'Current time minutes:', currentTime);
+
+  const dayHours = hours[dayOfWeek];
+  console.log('Day hours:', dayHours);
+  if (!dayHours || dayHours.toLowerCase() === 'closed') {
+    return false;
+  }
+
+  // Parse time range, e.g., "11:00 AM - 10:00 PM"
+  const [openTime, closeTime] = dayHours.split(' - ').map(timeStr => {
+    const [time, period] = timeStr.trim().split(' ');
+    const [hours, minutes] = time.split(':').map(Number);
+    let totalMinutes = hours * 60 + (minutes || 0);
+    if (period.toUpperCase() === 'PM' && hours !== 12) {
+      totalMinutes += 12 * 60;
+    } else if (period.toUpperCase() === 'AM' && hours === 12) {
+      totalMinutes = 0;
+    }
+    return totalMinutes;
+  });
+
+  console.log('Open time:', openTime, 'Close time:', closeTime);
+  const isOpen = currentTime >= openTime && currentTime <= closeTime;
+  console.log('Is open:', isOpen);
+  return isOpen;
+};
+
 export const getBusinessStatus = (): boolean => {
   // Simple implementation - in a real app, this would check current time against hours
   // For mock purposes, assume all businesses are open

@@ -1,5 +1,6 @@
 import type { Business, FilterOptions } from '../types/business';
 import { supabase } from '../utils/supabaseClient';
+import { isBusinessOpen } from '../utils/helpers';
 
 interface BusinessDBRow {
   id: string;
@@ -43,7 +44,7 @@ export const getBusinesses = async (filters?: FilterOptions): Promise<Business[]
     }
     if (filters.searchQuery) {
       const searchQuery = filters.searchQuery.toLowerCase();
-      query = query.or(`name.ilike.%${searchQuery}%,description.ilike.%${searchQuery}%,tags.cs.{${searchQuery}}`);
+      query = query.or(`name.ilike.%${searchQuery}%,description.ilike.%${searchQuery}%,category.ilike.%${searchQuery}%,tags.cs.{${searchQuery}}`);
     }
   }
 
@@ -77,8 +78,91 @@ export const getBusinessById = async (id: string): Promise<Business | null> => {
   return transformBusinessFromDB(data);
 };
 
+export interface Promotion {
+  id: string;
+  title: string;
+  description: string;
+  imageUrl?: string;
+  linkUrl?: string;
+  isActive: boolean;
+  startDate: string;
+  endDate?: string;
+  priority: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+// Mock promotions data for fallback
+const mockPromotions: Promotion[] = [
+  {
+    id: '1',
+    title: '¡Oferta Especial de Verano!',
+    description: 'Descuentos del 20% en todos los restaurantes participantes. ¡Aprovecha esta oportunidad única!',
+    imageUrl: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=400',
+    linkUrl: undefined,
+    isActive: true,
+    startDate: '2025-01-01T00:00:00Z',
+    endDate: undefined,
+    priority: 10,
+    createdAt: '2025-01-01T00:00:00Z',
+    updatedAt: '2025-01-01T00:00:00Z'
+  },
+  {
+    id: '2',
+    title: 'Nuevo Café en el Centro',
+    description: 'Descubre nuestro nuevo local con cafés especiales y ambiente acogedor.',
+    imageUrl: 'https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=400',
+    linkUrl: '/business/2',
+    isActive: true,
+    startDate: '2025-01-01T00:00:00Z',
+    endDate: undefined,
+    priority: 5,
+    createdAt: '2025-01-01T00:00:00Z',
+    updatedAt: '2025-01-01T00:00:00Z'
+  }
+];
+
+export const getActivePromotions = async (): Promise<Promotion[]> => {
+  try {
+    const now = new Date().toISOString();
+    const { data, error } = await supabase
+      .from('promotions')
+      .select('*')
+      .eq('is_active', true)
+      .lte('start_date', now)
+      .or(`end_date.is.null,end_date.gte.${now}`)
+      .order('priority', { ascending: false })
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.warn('Promotions table not found or error, using mock data:', error.message);
+      return mockPromotions;
+    }
+
+    return (data || []).map(row => ({
+      id: row.id,
+      title: row.title,
+      description: row.description,
+      imageUrl: row.image_url,
+      linkUrl: row.link_url,
+      isActive: row.is_active,
+      startDate: row.start_date,
+      endDate: row.end_date,
+      priority: row.priority,
+      createdAt: row.created_at,
+      updatedAt: row.updated_at
+    }));
+  } catch (error) {
+    console.warn('Error fetching promotions, using mock data:', error);
+    return mockPromotions;
+  }
+};
+
 // Helper function to transform DB row to Business type
 function transformBusinessFromDB(row: BusinessDBRow): Business {
+  console.log('Hours for', row.name, ':', row.hours);
+  const isOpen = isBusinessOpen(row.hours);
+  console.log('isOpen calculated:', isOpen);
   return {
     id: row.id,
     name: row.name,
@@ -98,7 +182,7 @@ function transformBusinessFromDB(row: BusinessDBRow): Business {
     latitude: row.latitude,
     longitude: row.longitude,
     hours: row.hours,
-    isOpen: row.is_open,
+    isOpen: isOpen,
     tags: row.tags
   };
 }

@@ -6,6 +6,10 @@ import BusinessGrid from '../../components/BusinessGrid';
 import type { BusinessCategory } from '../../types/business';
 import styles from './styles.module.scss';
 
+const strings = {
+  businessesSuffix: 'Negocios'
+};
+
 const CategoryPage: React.FC = () => {
   const { category } = useParams<{ category: string }>();
   const { businesses, loading, error, fetchBusinesses } = useBusinesses();
@@ -23,7 +27,7 @@ const CategoryPage: React.FC = () => {
 
   return (
     <div className={styles.categoryPage}>
-      <h2>{category} Businesses</h2>
+      <h2>{category} {strings.businessesSuffix}</h2>
       {error && <div className={styles.error}>{error}</div>}
       <BusinessGrid businesses={businesses} loading={loading} />
     </div>

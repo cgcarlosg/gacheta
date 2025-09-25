@@ -1,11 +1,11 @@
 export const BUSINESS_CATEGORIES = {
-  restaurants: 'Restaurants',
-  cafes: 'Cafes',
-  shops: 'Shops',
-  services: 'Services',
-  healthcare: 'Healthcare',
-  entertainment: 'Entertainment',
-  other: 'Other'
+  restaurantes: 'Restaurantes',
+  cafeterías: 'Cafeterías',
+  tiendas: 'Tiendas',
+  servicios: 'Servicios',
+  salud: 'Salud',
+  entretenimiento: 'Entretenimiento',
+  otros: 'Otros'
 } as const;
 
 export const PRICE_RANGES = {

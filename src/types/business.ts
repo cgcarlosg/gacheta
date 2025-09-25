@@ -24,13 +24,13 @@ export interface Business {
 }
 
 export type BusinessCategory =
-  | 'restaurants'
-  | 'cafes'
-  | 'shops'
-  | 'services'
-  | 'healthcare'
-  | 'entertainment'
-  | 'other';
+  | 'restaurantes'
+  | 'cafeterías'
+  | 'tiendas'
+  | 'servicios'
+  | 'salud'
+  | 'entretenimiento'
+  | 'otros';
 
 export interface FilterOptions {
   category?: BusinessCategory;

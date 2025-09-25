@@ -3,7 +3,7 @@
 @use '../../styles/mixins';
 
 .filterSidebar {
-  background: variables.$white;
+  background: variables.$card-background;
   padding: variables.$spacing-lg;
   padding-top: 0;
   border-radius: variables.$border-radius;
@@ -23,7 +23,7 @@
     margin-bottom: 0.5rem;
 
     &:hover {
-      background: color.adjust(variables.$secondary-color, $lightness: -7.5%);
+      background: var(--secondary-hover-color);
     }
   }
 
@@ -83,7 +83,7 @@
     padding: variables.$spacing-md;
     border: 1px solid variables.$light-color;
     border-radius: variables.$border-radius;
-    background: variables.$white;
+    background: variables.$card-background;
     margin-bottom: variables.$spacing-md;
 
     .checkboxLabel {
@@ -113,7 +113,7 @@
       border-color: variables.$secondary-color;
 
       &:hover {
-        background: color.adjust(variables.$secondary-color, $lightness: -7.5%);
+        background: var(--secondary-hover-color);
       }
     }
 
@@ -124,7 +124,7 @@
       border-color: variables.$primary-color;
 
       &:hover {
-        background: color.adjust(variables.$primary-color, $lightness: -7.5%);
+        background: var(--primary-hover-color);
       }
     }
   }

@@ -18,13 +18,27 @@
 
     .headerControls {
       display: flex;
-      flex-direction: column;
+      flex-wrap: wrap;
       gap: variables.$spacing-md;
       align-items: center;
+      justify-content: center;
 
       @include mixins.tablet {
         flex-direction: row;
         justify-content: center;
+      }
+    }
+
+    .themeButton {
+      @include mixins.button;
+      background: rgba(variables.$white, 0.2);
+      border: 1px solid rgba(variables.$white, 0.3);
+      color: variables.$white;
+      font-size: 1.2rem;
+
+      &:hover {
+        background: rgba(variables.$white, 0.3);
+        border-color: rgba(variables.$white, 0.4);
       }
     }
 
@@ -53,7 +67,7 @@
     .sidebar {
       width: 300px;
       padding: variables.$spacing-lg;
-      background: variables.$light-color;
+      background: variables.$card-background;
 
       @include mixins.mobile {
         display: none; // Hide sidebar on mobile
@@ -85,7 +99,7 @@
   }
 
   .mobileFilterModal {
-    background: variables.$white;
+    background: variables.$card-background;
     border-radius: variables.$border-radius;
     width: 90%;
     max-width: 400px;
