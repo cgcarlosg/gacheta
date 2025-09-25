@@ -2,6 +2,10 @@ import React, { useState } from 'react';
 import { useFilters } from '../../hooks/useFilters';
 import styles from './styles.module.scss';
 
+const strings = {
+  placeholder: 'Buscar negocios...'
+};
+
 const SearchBar: React.FC = () => {
   const { setFilters } = useFilters();
   const [searchValue, setSearchValue] = useState('');
@@ -15,7 +19,7 @@ const SearchBar: React.FC = () => {
     <div className={styles.searchBar}>
       <input
         type="text"
-        placeholder="Search businesses..."
+        placeholder={strings.placeholder}
         value={searchValue}
         onChange={(e) => handleSearchChange(e.target.value)}
         className={styles.input}

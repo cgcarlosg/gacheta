@@ -9,6 +9,24 @@ import icon from '../../assets/localization.png';
 import type { Business } from '../../types/business';
 import styles from './styles.module.scss';
 
+const strings = {
+  loading: 'Cargando...',
+  notFound: 'Negocio no encontrado',
+  backButton: '← Volver al Directorio',
+  category: 'Categoría:',
+  address: 'Dirección:',
+  phone: 'Teléfono:',
+  website: 'Sitio web:',
+  rating: 'Calificación:',
+  reviews: 'reseñas',
+  priceRange: 'Rango de Precios:',
+  description: 'Descripción:',
+  hours: 'Horarios'
+};
+
+const showRating = false;
+const showPriceRange = false;
+
 const BusinessDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const { getBusiness } = useBusinesses();
@@ -26,8 +44,8 @@ const BusinessDetailPage: React.FC = () => {
     fetchBusiness();
   }, [id, getBusiness]);
 
-  if (loading) return <div>Loading...</div>;
-  if (!business) return <div>Business not found</div>;
+  if (loading) return <div>{strings.loading}</div>;
+  if (!business) return <div>{strings.notFound}</div>;
 
   const customIcon = new L.Icon({
   iconUrl: icon,
@@ -38,21 +56,21 @@ const BusinessDetailPage: React.FC = () => {
 
   return (
     <div className={styles.businessDetail}>
-      <Link to="/" className={styles.backButton}>← Back to Directory</Link>
+      <Link to="/" className={styles.backButton}>{strings.backButton}</Link>
       <h2>{business.name}</h2>
       <div className={styles.content}>
         <div className={styles.info}>
           <img src={business.imageUrl} alt={business.name} className={styles.image} />
           <div className={styles.details}>
-            <p><strong>Category:</strong> {business.category}</p>
-            <p><strong>Address:</strong> {business.address}, {business.city}, {business.state} {business.zipCode}</p>
-            <p><strong>Phone:</strong> {business.phone}</p>
-            {business.website && <p><strong>Website:</strong> <a href={business.website} target="_blank" rel="noopener noreferrer">{business.website}</a></p>}
-            <p><strong>Rating:</strong> {business.rating} ({business.reviewCount} reviews)</p>
-            <p><strong>Price Range:</strong> {business.priceRange}</p>
-            <p><strong>Description:</strong> {business.description}</p>
+            <p><strong>{strings.category}</strong> {business.category}</p>
+            <p><strong>{strings.address}</strong> {business.address}, {business.city}, {business.state} {business.zipCode}</p>
+            <p><strong>{strings.phone}</strong> {business.phone}</p>
+            {business.website && <p><strong>{strings.website}</strong> <a href={business.website} target="_blank" rel="noopener noreferrer">{business.website}</a></p>}
+            {showRating && <p><strong>{strings.rating}</strong> {business.rating} ({business.reviewCount} {strings.reviews})</p>}
+            {showPriceRange && <p><strong>{strings.priceRange}</strong> {business.priceRange}</p>}
+            <p><strong>{strings.description}</strong> {business.description}</p>
             <div className={styles.hours}>
-              <h3>Hours</h3>
+              <h3>{strings.hours}</h3>
               {Object.entries(business.hours).map(([day, hours]) => (
                 <p key={day}><strong>{day}:</strong> {hours}</p>
               ))}

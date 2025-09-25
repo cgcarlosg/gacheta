@@ -4,6 +4,10 @@ import { useFilters } from '../../hooks/useFilters';
 import BusinessGrid from '../../components/BusinessGrid';
 import styles from './styles.module.scss';
 
+const strings = {
+  title: 'Negocios Locales'
+};
+
 const HomePage: React.FC = () => {
   const { businesses, loading, error, fetchBusinesses } = useBusinesses();
   const { filters } = useFilters();
@@ -14,7 +18,7 @@ const HomePage: React.FC = () => {
 
   return (
     <div className={styles.homePage}>
-      <h2>Local Businesses</h2>
+      <h2>{strings.title}</h2>
       {error && <div className={styles.error}>{error}</div>}
       <BusinessGrid businesses={businesses} loading={loading} />
     </div>

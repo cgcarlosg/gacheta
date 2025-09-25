@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom';
 import type { Business } from '../../types/business';
 import styles from './styles.module.scss';
 
+const showRating = false;
+
 interface BusinessCardProps {
   business: Business;
 }
@@ -24,10 +26,12 @@ const BusinessCard: React.FC<BusinessCardProps> = ({ business }) => {
       <div className={styles.content}>
         <h3 className={styles.name}>{business.name}</h3>
         <p className={styles.category}>{business.category}</p>
-        <div className={styles.rating}>
-          <div className={styles.stars}>{renderStars(Math.floor(business.rating))}</div>
-          <span className={styles.reviews}>({business.reviewCount})</span>
-        </div>
+        {showRating && (
+          <div className={styles.rating}>
+            <div className={styles.stars}>{renderStars(Math.floor(business.rating))}</div>
+            <span className={styles.reviews}>({business.reviewCount})</span>
+          </div>
+        )}
         <p className={styles.address}>{business.address}, {business.city}</p>
         <p className={styles.description}>{business.description}</p>
       </div>

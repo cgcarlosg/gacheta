@@ -2,6 +2,13 @@ import React, { useState } from 'react';
 import { useChat } from '../../hooks/useChat';
 import styles from './styles.module.scss';
 
+const strings = {
+  title: 'Asistente IA',
+  typing: 'IA está escribiendo...',
+  placeholder: 'Pregunta sobre negocios...',
+  send: 'Enviar'
+};
+
 const ChatWidget: React.FC = () => {
   const { messages, isTyping, sendMessage } = useChat();
   const [inputValue, setInputValue] = useState('');
@@ -30,7 +37,7 @@ const ChatWidget: React.FC = () => {
       {isOpen && (
         <div className={styles.chatWindow}>
           <div className={styles.chatHeader}>
-            <h4>AI Assistant</h4>
+            <h4>{strings.title}</h4>
             <button onClick={() => setIsOpen(false)}>×</button>
           </div>
           <div className={styles.messages}>
@@ -39,7 +46,7 @@ const ChatWidget: React.FC = () => {
                 {message.message}
               </div>
             ))}
-            {isTyping && <div className={styles.typing}>AI is typing...</div>}
+            {isTyping && <div className={styles.typing}>{strings.typing}</div>}
           </div>
           <div className={styles.inputArea}>
             <input
@@ -47,10 +54,10 @@ const ChatWidget: React.FC = () => {
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
               onKeyPress={handleKeyPress}
-              placeholder="Ask about businesses..."
+              placeholder={strings.placeholder}
               className={styles.input}
             />
-            <button onClick={handleSend} className={styles.sendButton}>Send</button>
+            <button onClick={handleSend} className={styles.sendButton}>{strings.send}</button>
           </div>
         </div>
       )}
