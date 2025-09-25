@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { useBusinesses } from '../../hooks/useBusinesses';
 import { useFilters } from '../../hooks/useFilters';
 import BusinessGrid from '../../components/BusinessGrid';
+import PromotionsBanner from '../../components/PromotionsBanner';
 import styles from './styles.module.scss';
 
 const strings = {
@@ -18,6 +19,7 @@ const HomePage: React.FC = () => {
 
   return (
     <div className={styles.homePage}>
+      <PromotionsBanner />
       <h2>{strings.title}</h2>
       {error && <div className={styles.error}>{error}</div>}
       <BusinessGrid businesses={businesses} loading={loading} />

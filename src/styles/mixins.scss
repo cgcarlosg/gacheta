@@ -48,8 +48,8 @@
   cursor: pointer;
 
   &:hover {
-    background-color: color.adjust(variables.$primary-color, $lightness: -7.5%);
-    border-color: color.adjust(variables.$primary-color, $lightness: -10%);
+    background-color: var(--primary-hover-color);
+    border-color: var(--primary-hover-color);
   }
 
   &:focus {

@@ -3,6 +3,7 @@ import { Outlet } from 'react-router-dom';
 import SearchBar from '../SearchBar';
 import FilterSidebar from '../FilterSidebar';
 import ChatWidget from '../ChatWidget';
+import { useTheme } from '../../contexts/ThemeContext';
 import styles from './styles.module.scss';
 
 const strings = {
@@ -14,6 +15,7 @@ const strings = {
 
 const Layout: React.FC = () => {
   const [showMobileFilters, setShowMobileFilters] = useState(false);
+  const { theme, toggleTheme } = useTheme();
 
   return (
     <div className={styles.layout}>
@@ -21,6 +23,13 @@ const Layout: React.FC = () => {
         <h1>{strings.title}</h1>
         <div className={styles.headerControls}>
           <SearchBar />
+          <button
+            className={styles.themeButton}
+            onClick={toggleTheme}
+            aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
+          >
+            {theme === 'light' ? '🌙' : '☀️'}
+          </button>
           <button
             className={styles.filterButton}
             onClick={() => setShowMobileFilters(true)}

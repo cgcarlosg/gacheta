@@ -32,12 +32,18 @@ const BusinessDetailPage: React.FC = () => {
   const { getBusiness } = useBusinesses();
   const [business, setBusiness] = useState<Business | null>(null);
   const [loading, setLoading] = useState(true);
+  const [imageSrc, setImageSrc] = useState<string>('');
+
+  const handleImageError = () => {
+    setImageSrc('https://via.placeholder.com/400x300?text=No+Image');
+  };
 
   useEffect(() => {
     const fetchBusiness = async () => {
       if (id) {
         const b = await getBusiness(id);
         setBusiness(b);
+        setImageSrc(b?.imageUrl || 'https://via.placeholder.com/400x300?text=No+Image');
         setLoading(false);
       }
     };
@@ -60,7 +66,7 @@ const BusinessDetailPage: React.FC = () => {
       <h2>{business.name}</h2>
       <div className={styles.content}>
         <div className={styles.info}>
-          <img src={business.imageUrl} alt={business.name} className={styles.image} />
+          <img src={imageSrc} alt={business.name} className={styles.image} onError={handleImageError} />
           <div className={styles.details}>
             <p><strong>{strings.category}</strong> {business.category}</p>
             <p><strong>{strings.address}</strong> {business.address}, {business.city}, {business.state} {business.zipCode}</p>

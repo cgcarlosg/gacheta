@@ -208,13 +208,23 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({ isMobile = false, onApply
         {Object.entries(BUSINESS_CATEGORIES).map(([key, label]) => (
           <label key={key} className={styles.checkboxLabel}>
             <input
-              type="checkbox"
+              type="radio"
+              name="category"
               checked={filters.category === key}
               onChange={() => handleCategoryChange(key)}
             />
             {label}
           </label>
         ))}
+        <label className={styles.checkboxLabel}>
+          <input
+            type="radio"
+            name="category"
+            checked={!filters.category}
+            onChange={() => handleCategoryChange('')}
+          />
+          {strings.allCategories}
+        </label>
       </div>
 
       <div className={styles.filterGroup}>
@@ -222,13 +232,23 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({ isMobile = false, onApply
         {LOCATIONS.map(location => (
           <label key={location} className={styles.checkboxLabel}>
             <input
-              type="checkbox"
+              type="radio"
+              name="location"
               checked={filters.location === location}
               onChange={() => handleLocationChange(location)}
             />
             {location}
           </label>
         ))}
+        <label className={styles.checkboxLabel}>
+          <input
+            type="radio"
+            name="location"
+            checked={!filters.location}
+            onChange={() => handleLocationChange('')}
+          />
+          {strings.allLocations}
+        </label>
       </div>
 
       <div className={styles.filterGroup}>
@@ -236,13 +256,23 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({ isMobile = false, onApply
         {RATINGS.map(rating => (
           <label key={rating} className={styles.checkboxLabel}>
             <input
-              type="checkbox"
+              type="radio"
+              name="rating"
               checked={filters.rating === rating}
               onChange={() => handleRatingChange(rating)}
             />
             {rating}+ {strings.stars}
           </label>
         ))}
+        <label className={styles.checkboxLabel}>
+          <input
+            type="radio"
+            name="rating"
+            checked={!filters.rating}
+            onChange={() => handleRatingChange(0)}
+          />
+          {strings.allRatings}
+        </label>
       </div>
 
       <div className={styles.filterGroup}>
@@ -250,13 +280,23 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({ isMobile = false, onApply
         {Object.entries(PRICE_RANGES).map(([key, label]) => (
           <label key={key} className={styles.checkboxLabel}>
             <input
-              type="checkbox"
+              type="radio"
+              name="priceRange"
               checked={filters.priceRange === key}
               onChange={() => handlePriceChange(key)}
             />
             {label}
           </label>
         ))}
+        <label className={styles.checkboxLabel}>
+          <input
+            type="radio"
+            name="priceRange"
+            checked={!filters.priceRange}
+            onChange={() => handlePriceChange('')}
+          />
+          {strings.allPrices}
+        </label>
       </div>
     </div>
   );

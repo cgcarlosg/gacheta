@@ -1,0 +1,95 @@
+@use '../../styles/variables';
+@use '../../styles/mixins';
+
+.banner {
+  background: linear-gradient(135deg, variables.$primary-color, variables.$success-color);
+  color: variables.$white;
+  padding: variables.$spacing-lg;
+  margin-bottom: variables.$spacing-lg;
+  border-radius: variables.$border-radius;
+  position: relative;
+  overflow: hidden;
+  min-height: 120px;
+  display: flex;
+  align-items: center;
+  gap: variables.$spacing-md;
+
+  .image {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: variables.$border-radius;
+    flex-shrink: 0;
+  }
+
+  .content {
+    flex: 1;
+
+    h3 {
+      margin: 0 0 variables.$spacing-sm 0;
+      font-size: 1.25rem;
+      font-weight: 600;
+    }
+
+    p {
+      margin: 0 0 variables.$spacing-sm 0;
+      font-size: 1rem;
+      line-height: 1.4;
+    }
+
+    .link {
+      display: inline-block;
+      color: variables.$white;
+      text-decoration: underline;
+      font-weight: 500;
+
+      &:hover {
+        text-decoration: none;
+      }
+    }
+  }
+
+  .indicators {
+    position: absolute;
+    bottom: variables.$spacing-sm;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: variables.$spacing-xs;
+
+    .indicator {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.5);
+      border: none;
+      cursor: pointer;
+      transition: variables.$transition;
+
+      &.active {
+        background: variables.$white;
+      }
+
+      &:hover {
+        background: variables.$white;
+      }
+    }
+  }
+
+  @include mixins.mobile {
+    flex-direction: column;
+    text-align: center;
+    padding: variables.$spacing-md;
+
+    .image {
+      width: 80px;
+      height: 80px;
+    }
+
+    .indicators {
+      position: static;
+      transform: none;
+      margin-top: variables.$spacing-sm;
+    }
+  }
+}

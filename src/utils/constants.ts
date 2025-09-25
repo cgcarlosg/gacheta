@@ -1,11 +1,11 @@
 export const BUSINESS_CATEGORIES = {
-  restaurants: 'Restaurantes',
-  cafes: 'Cafeterías',
-  shops: 'Tiendas',
-  services: 'Servicios',
-  healthcare: 'Salud',
-  entertainment: 'Entretenimiento',
-  other: 'Otros'
+  restaurantes: 'Restaurantes',
+  cafeterías: 'Cafeterías',
+  tiendas: 'Tiendas',
+  servicios: 'Servicios',
+  salud: 'Salud',
+  entretenimiento: 'Entretenimiento',
+  otros: 'Otros'
 } as const;
 
 export const PRICE_RANGES = {
@@ -18,23 +18,23 @@ export const PRICE_RANGES = {
 export const RATINGS = [1, 2, 3, 4, 5] as const;
 
 export const LOCATIONS = [
-  'Centro',
-  'Distrito Tecnológico',
-  'Barrio del Bienestar',
-  'Distrito Médico',
-  'Plaza de Comida',
-  'Distrito de las Artes',
-  'Barrio de la Moda',
-  'Distrito de Negocios',
-  'Plaza de la Salud',
-  'Distrito Marítimo',
-  'Centro Cultural',
-  'Complejo Deportivo',
-  'Distrito de Mascotas',
-  'Distrito de Entretenimiento',
-  'Distrito Jardín',
-  'Parque Industrial',
-  'Zona Familiar',
-  'Centro Comercial Suburbano',
-  'Barrio Internacional'
+  'Downtown',
+  'Tech District',
+  'Wellness Quarter',
+  'Medical District',
+  'Food Court',
+  'Arts District',
+  'Fashion Quarter',
+  'Business District',
+  'Health Plaza',
+  'Marina District',
+  'Cultural Center',
+  'Sports Complex',
+  'Pet District',
+  'Entertainment District',
+  'Garden District',
+  'Industrial Park',
+  'Family Zone',
+  'Suburban Mall',
+  'International Quarter'
 ];

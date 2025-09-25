@@ -2,36 +2,93 @@ import type { ChatResponse } from '../types/chat';
 import { mockBusinesses } from '../data/businesses';
 
 export const sendChatMessage = async (message: string): Promise<ChatResponse> => {
-  // Mock AI processing - no delay needed for development
-
-  const lowerMessage = message.toLowerCase();
-  let response = "I'm sorry, I didn't understand that. Can you try asking about restaurants, cafes, or specific businesses?";
+  let response = "Lo siento, no pude procesar tu mensaje. ¿Puedes intentarlo de nuevo?";
   let suggestions: string[] = [];
 
-  if (lowerMessage.includes('italian') || lowerMessage.includes('pasta') || lowerMessage.includes('pizza')) {
-    const italianPlaces = mockBusinesses.filter(b => b.category === 'restaurants' && b.tags.includes('Italian'));
-    if (italianPlaces.length > 0) {
-      response = `I found ${italianPlaces.length} Italian restaurant(s). ${italianPlaces[0].name} is highly rated with ${italianPlaces[0].rating} stars. Would you like more details?`;
-      suggestions = italianPlaces.slice(0, 3).map(b => `Tell me about ${b.name}`);
+  try {
+    const apiResponse = await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${process.env.OPENAI_API_KEY}`, // make sure this env var is set
+      },
+      body: JSON.stringify({
+        model: "gpt-3.5-turbo",
+        messages: [
+          {
+            role: "system",
+            content: `Eres un asistente para una aplicación de directorio de negocios locales. Responde siempre en español.
+
+Datos de negocios disponibles: ${JSON.stringify(
+              mockBusinesses.map(b => ({
+                id: b.id,
+                name: b.name,
+                category: b.category,
+                description: b.description,
+                rating: b.rating,
+                address: b.address,
+                phone: b.phone,
+                tags: b.tags,
+              }))
+            )}.
+
+Responde en uno de dos formatos:
+
+1) Un array JSON de lugares con claves "name" y "link".
+   Ejemplo:
+   [
+     {"name": "Café Central", "link": "/business/1"},
+     {"name": "Bistró Luna", "link": "/business/2"}
+   ]
+
+2) Una sola oración corta informativa, máximo 100 caracteres.
+
+Nota importante: El mapa de la aplicación no está conectado a servicios de mapas en línea,
+por lo que no puede proporcionar indicaciones de dirección.`,
+          },
+          { role: "user", content: message },
+        ],
+        max_tokens: 400,
+      }),
+    });
+
+    const data = await apiResponse.json();
+    const raw = data.choices?.[0]?.message?.content?.trim() ?? "";
+
+    try {
+      // Try parsing JSON list of places
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed)) {
+        const limit = 10;
+        const truncated = parsed.slice(0, limit);
+
+        response = truncated
+          .map((p: { name: string; link: string }) => `${p.name} - ${p.link}`)
+          .join("\n");
+
+        if (parsed.length > limit) {
+          response += `\n...y ${parsed.length - limit} más disponibles.`;
+          suggestions = ["Ver más resultados", "Ver en mapa", "Buscar similares"];
+        } else {
+          suggestions = ["Ver en mapa", "Buscar similares", "Más detalles"];
+        }
+
+        response +=
+          "\n\nNota: El mapa no está conectado a servicios de mapas en línea, por lo que no puedo proporcionar indicaciones de dirección.";
+      } else {
+        // If it's not JSON, return as a short sentence
+        response = raw.length > 150 ? raw.slice(0, 150) : raw;
+      }
+    } catch {
+      // Fallback: short text sentence
+      response =
+        (raw.length > 150 ? raw.slice(0, 150) : raw) +
+        "\n\nNota: El mapa no está conectado a servicios de mapas en línea.";
+      suggestions = ["Más detalles", "Buscar similares", "Ver en mapa"];
     }
-  } else if (lowerMessage.includes('coffee') || lowerMessage.includes('cafe')) {
-    const cafes = mockBusinesses.filter(b => b.category === 'cafes');
-    response = `There are ${cafes.length} cafes in the area. ${cafes[0].name} is a great choice for coffee lovers.`;
-    suggestions = cafes.slice(0, 3).map(b => `More about ${b.name}`);
-  } else if (lowerMessage.includes('directions') || lowerMessage.includes('location')) {
-    response = "I can help you find directions. Which business are you looking for?";
-  } else if (lowerMessage.includes('contact') || lowerMessage.includes('phone')) {
-    response = "I'd be happy to provide contact information. Which business interests you?";
-  } else if (lowerMessage.includes('show me') || lowerMessage.includes('find')) {
-    if (lowerMessage.includes('restaurant')) {
-      const restaurants = mockBusinesses.filter(b => b.category === 'restaurants');
-      response = `I can show you ${restaurants.length} restaurants. What type are you looking for?`;
-      suggestions = ['Italian restaurants', 'Burgers', 'Sushi', 'Thai food'];
-    } else if (lowerMessage.includes('shop') || lowerMessage.includes('store')) {
-      const shops = mockBusinesses.filter(b => b.category === 'shops');
-      response = `There are ${shops.length} shops available. What are you shopping for?`;
-      suggestions = ['Electronics', 'Books', 'Fashion', 'Home & Garden'];
-    }
+  } catch (error) {
+    console.error("Error calling LLM API:", error);
+    response = "Hubo un error al procesar tu mensaje. Por favor, intenta de nuevo.";
   }
 
   return { message: response, suggestions };

@@ -10,6 +10,12 @@ interface BusinessCardProps {
 }
 
 const BusinessCard: React.FC<BusinessCardProps> = ({ business }) => {
+  const [imageSrc, setImageSrc] = React.useState(business.imageUrl || 'https://via.placeholder.com/400x300?text=No+Image');
+
+  const handleImageError = () => {
+    setImageSrc('https://via.placeholder.com/400x300?text=No+Image');
+  };
+
   const renderStars = (rating: number) => {
     const stars = [];
     for (let i = 1; i <= 5; i++) {
@@ -22,7 +28,9 @@ const BusinessCard: React.FC<BusinessCardProps> = ({ business }) => {
 
   return (
     <Link to={`/business/${business.id}`} className={styles.businessCard}>
-      <img src={business.imageUrl} alt={business.name} className={styles.image} />
+      <div className={styles.imageContainer}>
+        <img src={imageSrc} alt={business.name} className={styles.image} onError={handleImageError} />
+      </div>
       <div className={styles.content}>
         <h3 className={styles.name}>{business.name}</h3>
         <p className={styles.category}>{business.category}</p>
@@ -34,6 +42,7 @@ const BusinessCard: React.FC<BusinessCardProps> = ({ business }) => {
         )}
         <p className={styles.address}>{business.address}, {business.city}</p>
         <p className={styles.description}>{business.description}</p>
+        <p className={`${styles.status} ${business.isOpen ? styles.open : styles.closed}`}>{business.isOpen ? 'Abierto' : 'Cerrado'}</p>
       </div>
     </Link>
   );
