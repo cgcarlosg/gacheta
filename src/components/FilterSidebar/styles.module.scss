@@ -91,9 +91,20 @@
       margin-bottom: variables.$spacing-sm;
       cursor: pointer;
       color: variables.$dark-color;
+      padding: variables.$spacing-xs;
+      border-radius: variables.$border-radius;
 
       input {
         margin-right: variables.$spacing-sm;
+
+        &:checked {
+          accent-color: variables.$primary-color;
+        }
+      }
+
+      &.checked {
+        background: rgba(variables.$primary-color, 0.2);
+        border: 2px solid variables.$primary-color;
       }
     }
   }

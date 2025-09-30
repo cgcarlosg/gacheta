@@ -14,6 +14,7 @@ const HomePage: React.FC = () => {
   const { filters } = useFilters();
 
   useEffect(() => {
+    console.log('HomePage: Fetching businesses with filters:', filters);
     fetchBusinesses(filters);
   }, [filters, fetchBusinesses]);
 

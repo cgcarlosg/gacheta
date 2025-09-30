@@ -26,6 +26,7 @@ interface BusinessDBRow {
 }
 
 export const getBusinesses = async (filters?: FilterOptions): Promise<Business[]> => {
+  console.log('API: getBusinesses called with filters:', filters);
 
   let query = supabase.from('businesses').select('*');
 

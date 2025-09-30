@@ -2,7 +2,7 @@
 @use '../../styles/mixins';
 
 .searchBar {
-  margin-bottom: variables.$spacing-lg;
+  margin-bottom: variables.$spacing-md;
   width: 100%;
 
   .input {
