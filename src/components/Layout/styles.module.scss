@@ -9,11 +9,34 @@
   .header {
     background: variables.$primary-color;
     color: variables.$white;
-    padding: variables.$spacing-lg;
+    padding: variables.$spacing-md;
     text-align: center;
 
+    @include mixins.tablet {
+       padding: variables.$spacing-lg;
+    }
+
+    @include mixins.desktop {
+       padding: variables.$spacing-lg;
+    }
+  
+    @include mixins.mobile {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+  
     h1 {
+      font-size: 26px;
       margin: 0 0 variables.$spacing-md 0;
+
+      @include mixins.tablet {
+        font-size: 32px;
+      }
+
+      @include mixins.desktop {
+        font-size: 32px;
+      }
     }
 
     .headerControls {
@@ -50,7 +73,11 @@
       display: block;
 
       @include mixins.tablet {
-        display: none; // Hide on tablet and up
+        display: none;
+      }
+
+      @include mixins.desktop {
+        display: none;
       }
 
       &:hover {
@@ -94,7 +121,7 @@
     padding-top: variables.$spacing-xl;
 
     @include mixins.tablet {
-      display: none; // Hide overlay on tablet and up
+      display: none;
     }
   }
 

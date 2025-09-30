@@ -10,10 +10,10 @@ interface BusinessCardProps {
 }
 
 const BusinessCard: React.FC<BusinessCardProps> = ({ business }) => {
-  const [imageSrc, setImageSrc] = React.useState(business.imageUrl || 'https://via.placeholder.com/400x300?text=No+Image');
+  const [imageSrc, setImageSrc] = React.useState(business.imageUrl || 'https://via.placeholder.com/300x200?text=No+Image');
 
   const handleImageError = () => {
-    setImageSrc('https://via.placeholder.com/400x300?text=No+Image');
+    setImageSrc('https://via.placeholder.com/300x200?text=No+Image');
   };
 
   const renderStars = (rating: number) => {
@@ -29,7 +29,7 @@ const BusinessCard: React.FC<BusinessCardProps> = ({ business }) => {
   return (
     <Link to={`/business/${business.id}`} className={styles.businessCard}>
       <div className={styles.imageContainer}>
-        <img src={imageSrc} alt={business.name} className={styles.image} onError={handleImageError} />
+        <img src={imageSrc} alt={business.name} className={styles.image} onError={handleImageError} loading="lazy" />
       </div>
       <div className={styles.content}>
         <h3 className={styles.name}>{business.name}</h3>

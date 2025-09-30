@@ -99,11 +99,17 @@
 
   @include mixins.mobile {
     .imageContainer {
-      height: 150px;
+      height: 120px;
     }
 
     .content {
       padding: variables.$spacing-sm;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .imageContainer {
+      height: 100px;
     }
   }
 }
