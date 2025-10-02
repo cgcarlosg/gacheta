@@ -71,7 +71,7 @@ export const getBusinessById = async (id: string): Promise<Business | null> => {
 
   if (error) {
     if (error.code === 'PGRST116') {
-      return null; // No rows found
+      return null;
     }
     throw new Error(`Failed to fetch business: ${error.message}`);
   }
@@ -93,7 +93,6 @@ export interface Promotion {
   updatedAt: string;
 }
 
-// Mock promotions data for fallback
 const mockPromotions: Promotion[] = [
   {
     id: '1',
@@ -110,6 +109,32 @@ const mockPromotions: Promotion[] = [
   },
   {
     id: '2',
+    title: 'Nuevo Café en el Centro',
+    description: 'Descubre nuestro nuevo local con cafés especiales y ambiente acogedor.',
+    imageUrl: 'https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=400',
+    linkUrl: '/business/2',
+    isActive: true,
+    startDate: '2025-01-01T00:00:00Z',
+    endDate: undefined,
+    priority: 5,
+    createdAt: '2025-01-01T00:00:00Z',
+    updatedAt: '2025-01-01T00:00:00Z'
+  },
+   {
+    id: '3',
+    title: '¡Oferta Especial de Verano!',
+    description: 'Descuentos del 20% en todos los restaurantes participantes. ¡Aprovecha esta oportunidad única!',
+    imageUrl: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=400',
+    linkUrl: undefined,
+    isActive: true,
+    startDate: '2025-01-01T00:00:00Z',
+    endDate: undefined,
+    priority: 10,
+    createdAt: '2025-01-01T00:00:00Z',
+    updatedAt: '2025-01-01T00:00:00Z'
+  },
+  {
+    id: '4',
     title: 'Nuevo Café en el Centro',
     description: 'Descubre nuestro nuevo local con cafés especiales y ambiente acogedor.',
     imageUrl: 'https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=400',

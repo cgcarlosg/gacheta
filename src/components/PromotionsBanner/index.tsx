@@ -56,6 +56,14 @@ const PromotionsBanner: React.FC = () => {
 
   const currentPromotion = promotions[currentIndex];
 
+  const goToPrev = () => {
+    setCurrentIndex((prev) => (prev - 1 + promotions.length) % promotions.length);
+  };
+
+  const goToNext = () => {
+    setCurrentIndex((prev) => (prev + 1) % promotions.length);
+  };
+
   return (
     <div className={styles.banner}>
       {currentPromotion.imageUrl && (
@@ -71,15 +79,23 @@ const PromotionsBanner: React.FC = () => {
         )}
       </div>
       {promotions.length > 1 && (
-        <div className={styles.indicators}>
-          {promotions.map((_, index) => (
-            <button
-              key={index}
-              className={`${styles.indicator} ${index === currentIndex ? styles.active : ''}`}
-              onClick={() => setCurrentIndex(index)}
-            />
-          ))}
-        </div>
+        <>
+          <button className={`${styles.arrow} ${styles.arrowLeft}`} onClick={goToPrev}>
+            ‹
+          </button>
+          <button className={`${styles.arrow} ${styles.arrowRight}`} onClick={goToNext}>
+            ›
+          </button>
+          <div className={styles.indicators}>
+            {promotions.map((_, index) => (
+              <button
+                key={index}
+                className={`${styles.indicator} ${index === currentIndex ? styles.active : ''}`}
+                onClick={() => setCurrentIndex(index)}
+              />
+            ))}
+          </div>
+        </>
       )}
     </div>
   );
