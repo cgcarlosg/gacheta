@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useFilters } from '../../hooks/useFilters';
-import { BUSINESS_CATEGORIES, PRICE_RANGES, RATINGS, LOCATIONS } from '../../utils/constants';
+import { BUSINESS_CATEGORIES, PRICE_RANGES, RATINGS, LOCATIONS, CATEGORY_ICONS } from '../../utils/constants';
 import type { BusinessCategory, Business, FilterOptions } from '../../types/business';
 import styles from './styles.module.scss';
 
@@ -119,7 +119,7 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({ isMobile = false, onApply
                      checked={tempFilters.category === key}
                      onChange={() => handleCategoryChange(key)}
                    />
-                   {label}
+                   {CATEGORY_ICONS[key as keyof typeof CATEGORY_ICONS]} {label}
                  </label>
                ))}
                <label className={`${styles.checkboxLabel} ${!tempFilters.category ? styles.checked : ''}`}>
@@ -258,7 +258,7 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({ isMobile = false, onApply
               checked={filters.category === key}
               onChange={() => handleCategoryChange(key)}
             />
-            {label}
+            {CATEGORY_ICONS[key as keyof typeof CATEGORY_ICONS]} {label}
           </label>
         ))}
         <label className={styles.checkboxLabel}>

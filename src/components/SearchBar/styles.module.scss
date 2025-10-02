@@ -3,7 +3,17 @@
 
 .searchBar {
   margin-bottom: variables.$spacing-md;
-  width: 100%;
+  width: 90%;
+
+  @include mixins.tablet {
+    margin-bottom:0;
+    width: 85%;
+  }
+
+    @include mixins.desktop {
+      margin-bottom: 0;
+      width: 85%;
+    }
 
   .input {
     width: 100%;

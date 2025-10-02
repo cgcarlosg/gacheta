@@ -20,8 +20,9 @@
   .imageContainer {
     background-color: antiquewhite;
     width: 100%;
-    height: 200px;
+    height: 100px;
     overflow: hidden;
+    position: relative;
   }
 
   .image {
@@ -84,16 +85,33 @@
     margin-bottom: variables.$spacing-sm;
   }
 
-  .status {
-    font-size: 0.875rem;
-    font-weight: 500;
+  .iconContainer {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: rgba(0, 0, 0, 0.7);
+    border-radius: 20px;
+    padding: 5px 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
 
-    &.open {
-      color: variables.$success-color;
+    .categoryIcon {
+      font-size: 1.4rem;
     }
 
-    &.closed {
-      color: variables.$danger-color;
+    .status {
+      font-size: 1.4rem;
+      margin: 0;
+
+      &.open {
+        color: variables.$success-color;
+      }
+
+      &.closed {
+        color: variables.$danger-color;
+      }
     }
   }
 

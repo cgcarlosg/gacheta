@@ -8,6 +8,16 @@ export const BUSINESS_CATEGORIES = {
   otros: 'Otros'
 } as const;
 
+export const CATEGORY_ICONS = {
+  restaurantes: '🍽️',
+  cafeterías: '☕',
+  tiendas: '🛒',
+  servicios: '🔧',
+  salud: '⚕️',
+  entretenimiento: '🎭',
+  otros: '❓'
+} as const;
+
 export const PRICE_RANGES = {
   '$': '$',
   '$$': '$$',

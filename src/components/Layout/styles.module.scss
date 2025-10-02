@@ -9,22 +9,16 @@
   .header {
     background: variables.$primary-color;
     color: variables.$white;
-    padding: variables.$spacing-md;
+    padding: variables.$spacing-lg;
     text-align: center;
-
-    @include mixins.tablet {
-       padding: variables.$spacing-lg;
-    }
-
-    @include mixins.desktop {
-       padding: variables.$spacing-lg;
-    }
   
     @include mixins.mobile {
+       padding: variables.$spacing-md;
       position: sticky;
       top: 0;
       z-index: 100;
     }
+    
   
     h1 {
       font-size: 26px;
@@ -42,9 +36,9 @@
     .headerControls {
       display: flex;
       flex-wrap: wrap;
-      gap: variables.$spacing-md;
       align-items: center;
       justify-content: center;
+
 
       @include mixins.tablet {
         flex-direction: row;
