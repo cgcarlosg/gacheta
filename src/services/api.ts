@@ -18,17 +18,19 @@ interface BusinessDBRow {
   review_count: number;
   price_range: string;
   image_url: string;
+  image_filename?: string;
   latitude: number;
   longitude: number;
   hours: Record<string, string>;
   is_open: boolean;
   tags: string[];
+  is_approved: boolean;
 }
 
 export const getBusinesses = async (filters?: FilterOptions): Promise<Business[]> => {
   console.log('API: getBusinesses called with filters:', filters);
 
-  let query = supabase.from('businesses').select('*');
+  let query = supabase.from('businesses').select('*').eq('is_approved', true);
 
   if (filters) {
     if (filters.category) {
@@ -184,6 +186,40 @@ export const getActivePromotions = async (): Promise<Promotion[]> => {
   }
 };
 
+// Submit a new business
+export const submitBusiness = async (businessData: Omit<Business, 'id' | 'isOpen' | 'isApproved'>): Promise<void> => {
+  const dbData = {
+    name: businessData.name,
+    category: businessData.category,
+    address: businessData.address,
+    city: businessData.city,
+    state: businessData.state,
+    zip_code: businessData.zipCode,
+    phone: businessData.phone,
+    email: businessData.email,
+    website: businessData.website,
+    description: businessData.description,
+    rating: businessData.rating,
+    review_count: businessData.reviewCount,
+    price_range: businessData.priceRange,
+    image_url: businessData.imageUrl,
+    image_filename: businessData.imageFilename,
+    latitude: businessData.latitude,
+    longitude: businessData.longitude,
+    hours: businessData.hours,
+    is_open: null, // Always null for new submissions
+    tags: businessData.tags,
+    is_approved: false // Always false for new submissions
+  };
+
+  const { error } = await supabase.from('businesses').insert([dbData]);
+
+  if (error) {
+    console.error('Error submitting business:', error);
+    throw new Error(`Failed to submit business: ${error.message}`);
+  }
+};
+
 // Helper function to transform DB row to Business type
 function transformBusinessFromDB(row: BusinessDBRow): Business {
   console.log('Hours for', row.name, ':', row.hours);
@@ -204,11 +240,13 @@ function transformBusinessFromDB(row: BusinessDBRow): Business {
     rating: row.rating,
     reviewCount: row.review_count,
     priceRange: row.price_range as Business['priceRange'],
-    imageUrl: row.image_url,
+    imageUrl: row.image_filename || row.image_url, // Use image_filename if available, else image_url
+    imageFilename: row.image_filename,
     latitude: row.latitude,
     longitude: row.longitude,
     hours: row.hours,
     isOpen: isOpen,
-    tags: row.tags
+    tags: row.tags,
+    isApproved: row.is_approved
   };
 }

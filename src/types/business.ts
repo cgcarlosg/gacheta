@@ -14,6 +14,7 @@ export interface Business {
   reviewCount: number;
   priceRange: '$' | '$$' | '$$$' | '$$$$';
   imageUrl: string;
+  imageFilename?: string;
   latitude: number;
   longitude: number;
   hours: {
@@ -21,6 +22,7 @@ export interface Business {
   };
   isOpen: boolean;
   tags: string[];
+  isApproved: boolean;
 }
 
 export type BusinessCategory =

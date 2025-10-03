@@ -59,6 +59,19 @@
       }
     }
 
+    .addBusinessButton {
+      @include mixins.button;
+      background: rgba(variables.$white, 0.2);
+      border: 1px solid rgba(variables.$white, 0.3);
+      color: variables.$white;
+      margin-right: variables.$spacing-md;
+
+      &:hover {
+        background: rgba(variables.$white, 0.3);
+        border-color: rgba(variables.$white, 0.4);
+      }
+    }
+
     .filterButton {
       @include mixins.button;
       background: rgba(variables.$white, 0.2);
