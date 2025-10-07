@@ -1,0 +1,322 @@
+@use '../../styles/variables';
+@use '../../styles/mixins';
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modalContent {
+  background: variables.$white;
+  border-radius: variables.$border-radius;
+  padding: variables.$spacing-lg;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+  width: 90%;
+}
+
+.modalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: variables.$spacing-lg;
+  padding-bottom: variables.$spacing-md;
+  //border-bottom: 1px solid variables.$secondary-color;
+
+  h2 {
+    margin: 0;
+    color: variables.$dark-color;
+  }
+}
+
+.closeButton {
+  background: rgba(gray,0.1);
+  border: none;
+  font-size: 2rem;
+  color: variables.$secondary-color;
+  cursor: pointer;
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background-color 0.2s, color 0.2s;
+
+  &:hover {
+    background: variables.$secondary-color;
+    color: variables.$white;
+  }
+
+  &:focus {
+    outline: 2px solid variables.$primary-color;
+    outline-offset: 2px;
+  }
+}
+
+.errorMessages {
+  background: variables.$danger-color;
+  color: white;
+  padding: variables.$spacing-sm variables.$spacing-md;
+  border-radius: variables.$border-radius;
+  margin-bottom: variables.$spacing-md;
+
+  .error {
+    color:  variables.$white;
+    margin: 0;
+    font-size: 0.875rem;
+    font-weight: 500;
+  }
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: variables.$spacing-md;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: variables.$spacing-xs;
+
+  label {
+    font-weight: 500;
+    color: variables.$dark-color;
+  }
+
+  input, select, textarea {
+    padding: variables.$spacing-sm;
+    border: 1px solid variables.$secondary-color;
+    border-radius: variables.$border-radius;
+    font-size: 1rem;
+
+    &:focus {
+      outline: none;
+      border-color: variables.$primary-color;
+    }
+  }
+
+  .fieldError {
+    color: variables.$danger-color;
+    font-size: 0.875rem;
+    margin-top: variables.$spacing-xs;
+    margin-bottom: 0;
+  }
+
+  .fieldFooter {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: variables.$spacing-xs;
+  }
+
+  .charCount {
+    font-size: 0.75rem;
+    color: variables.$secondary-color;
+  }
+
+  textarea {
+    min-height: 80px;
+    resize: vertical;
+  }
+}
+
+.row {
+  display: flex;
+  gap: variables.$spacing-md;
+
+  .field {
+    flex: 1;
+  }
+}
+
+.locationControls {
+  display: flex;
+  gap: variables.$spacing-sm;
+  margin-bottom: variables.$spacing-sm;
+
+  button {
+    padding: variables.$spacing-xs variables.$spacing-sm;
+    background: variables.$primary-color;
+    color: variables.$white;
+    border: none;
+    border-radius: variables.$border-radius;
+    cursor: pointer;
+
+    &:hover {
+      background: variables.$primary-hover-color;
+    }
+  }
+}
+
+.coords {
+  display: flex;
+  gap: variables.$spacing-sm;
+
+  input {
+    flex: 1;
+  }
+}
+
+.mapContainer {
+  margin-top: variables.$spacing-sm;
+  border: 1px solid variables.$secondary-color;
+  border-radius: variables.$border-radius;
+  overflow: hidden;
+}
+
+.imageUploadOptions {
+  display: flex;
+  gap: variables.$spacing-sm;
+  margin-bottom: variables.$spacing-sm;
+}
+
+.uploadOption {
+  flex: 1;
+}
+
+.uploadButton {
+  display: inline-block;
+  padding: variables.$spacing-sm variables.$spacing-md;
+  background: variables.$primary-color;
+  color: variables.$white !important;
+  border: none;
+  border-radius: variables.$border-radius;
+  cursor: pointer;
+  font-size: 0.875rem;
+  text-align: center;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background: variables.$primary-hover-color;
+  }
+}
+
+.imagePreview {
+  max-width: 200px;
+  max-height: 200px;
+  margin-top: variables.$spacing-sm;
+  border-radius: variables.$border-radius;
+  border: 1px solid variables.$secondary-color;
+}
+
+.dayHours {
+  margin-bottom: variables.$spacing-md;
+  padding: variables.$spacing-sm;
+  border: 1px solid variables.$secondary-color;
+  border-radius: variables.$border-radius;
+  background: variables.$white;
+
+  .dayLabel {
+    display: flex;
+    align-items: center;
+    gap: variables.$spacing-sm;
+    font-weight: 500;
+    margin-bottom: variables.$spacing-sm;
+    cursor: pointer;
+
+    input[type="checkbox"] {
+      margin: 0;
+    }
+  }
+
+  .timeSelectors {
+    display: flex;
+    align-items: center;
+    gap: variables.$spacing-sm;
+
+    select {
+      padding: variables.$spacing-xs;
+      border: 1px solid variables.$secondary-color;
+      border-radius: variables.$border-radius;
+      font-size: 0.875rem;
+    }
+
+    .timeSeparator {
+      color: variables.$secondary-color;
+      font-weight: 500;
+    }
+  }
+}
+
+.actions {
+  display: flex;
+  gap: variables.$spacing-sm;
+  justify-content: flex-end;
+  margin-top: variables.$spacing-md;
+
+  button {
+    padding: variables.$spacing-sm variables.$spacing-md;
+    border: none;
+    border-radius: variables.$border-radius;
+    font-size: 1rem;
+    cursor: pointer;
+
+    &:first-child {
+      background: variables.$secondary-color;
+      color: variables.$white;
+
+      &:hover {
+        background: variables.$dark-color;
+      }
+    }
+
+    &:last-child {
+      background: variables.$success-color;
+      color: variables.$white;
+
+      &:hover {
+        background: variables.$success-hover-color;
+      }
+    }
+  }
+}
+
+.error {
+  color: variables.$danger-color;
+  font-size: 0.875rem;
+  margin-top: variables.$spacing-xs;
+}
+
+@include mixins.mobile {
+  .modalContent {
+    padding: variables.$spacing-md;
+    width: 95%;
+    max-height: 95vh;
+  }
+
+  .row {
+    flex-direction: column;
+  }
+
+  .locationControls {
+    flex-direction: column;
+
+    button {
+      width: 100%;
+    }
+  }
+
+  .coords {
+    flex-direction: column;
+  }
+
+  .actions {
+    flex-direction: column;
+
+    button {
+      width: 100%;
+    }
+  }
+}

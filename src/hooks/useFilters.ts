@@ -10,13 +10,11 @@ interface FilterState {
 export const useFilterStore = create<FilterState>((set) => ({
   filters: {},
   setFilters: (newFilters) => {
-    console.log('Setting filters:', newFilters);
     set((state) => ({
       filters: { ...state.filters, ...newFilters }
     }));
   },
   clearFilters: () => {
-    console.log('Clearing filters');
     set({ filters: {} });
   }
 }));

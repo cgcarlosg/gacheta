@@ -7,10 +7,7 @@ export const isBusinessOpen = (hours: Record<string, string>): boolean => {
   const dayOfWeek = now.toLocaleDateString('en-US', { weekday: 'long' });
   const currentTime = now.getHours() * 60 + now.getMinutes(); // Minutes since midnight
 
-  console.log('Current day:', dayOfWeek, 'Current time minutes:', currentTime);
-
   const dayHours = hours[dayOfWeek];
-  console.log('Day hours:', dayHours);
   if (!dayHours || dayHours.toLowerCase() === 'closed') {
     return false;
   }
@@ -28,9 +25,7 @@ export const isBusinessOpen = (hours: Record<string, string>): boolean => {
     return totalMinutes;
   });
 
-  console.log('Open time:', openTime, 'Close time:', closeTime);
   const isOpen = currentTime >= openTime && currentTime <= closeTime;
-  console.log('Is open:', isOpen);
   return isOpen;
 };
 

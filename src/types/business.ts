@@ -10,17 +10,20 @@ export interface Business {
   email: string;
   website?: string;
   description: string;
-  rating: number;
-  reviewCount: number;
-  priceRange: '$' | '$$' | '$$$' | '$$$$';
+  rating: number | null;
+  reviewCount: number | null;
+  priceRange: '$' | '$$' | '$$$' | '$$$$' | null;
   imageUrl: string;
+  imageFilename?: string;
   latitude: number;
   longitude: number;
   hours: {
-    [key: string]: string; // e.g., "Monday": "9:00 AM - 5:00 PM"
+    [key: string]: string;
   };
   isOpen: boolean;
   tags: string[];
+  specialRequest?: string;
+  isApproved: boolean;
 }
 
 export type BusinessCategory =

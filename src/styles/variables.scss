@@ -4,6 +4,7 @@
   --secondary-color: #6c757d;
   --secondary-hover-color: #545b62;
   --success-color: #28a745;
+  --success-hover-color: #28a799;
   --danger-color: #dc3545;
   --warning-color: #ffc107;
   --info-color: #17a2b8;
@@ -35,8 +36,11 @@
 }
 
 $primary-color: var(--primary-color);
+$primary-hover-color: var(--primary-hover-color);
 $secondary-color: var(--secondary-color);
+$secondary-hover-color: var(--secondary-hover-color);
 $success-color: var(--success-color);
+$success-hover-color: var(--success-hover-color);
 $danger-color: var(--danger-color);
 $warning-color: var(--warning-color);
 $info-color: var(--info-color);

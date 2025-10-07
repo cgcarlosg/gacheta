@@ -19,8 +19,8 @@ const PromotionsBanner: React.FC = () => {
       try {
         const activePromotions = await getActivePromotions();
         setPromotions(activePromotions);
-      } catch (error) {
-        console.error('Error fetching promotions:', error);
+      } catch {
+        // Error handled silently
       } finally {
         setLoading(false);
       }

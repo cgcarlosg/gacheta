@@ -1,6 +1,7 @@
 @use '../../styles/variables';
 @use '../../styles/mixins';
 
+
 .layout {
   min-height: 100vh;
   display: flex;
@@ -13,7 +14,7 @@
     text-align: center;
   
     @include mixins.mobile {
-       padding: variables.$spacing-md;
+      padding: variables.$spacing-md;
       position: sticky;
       top: 0;
       z-index: 100;
@@ -56,6 +57,17 @@
       &:hover {
         background: rgba(variables.$white, 0.3);
         border-color: rgba(variables.$white, 0.4);
+      }
+    }
+
+    .addBusinessButton {
+      @include mixins.button;
+      box-shadow: 4px 4px 8px rgba(white, 0.9);
+      color: variables.$white;
+      margin-right: variables.$spacing-md;
+
+      &:hover {
+        border-color: rgba(white, 0.4);
       }
     }
 

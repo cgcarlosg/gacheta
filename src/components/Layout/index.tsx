@@ -3,18 +3,22 @@ import { Outlet } from 'react-router-dom';
 import SearchBar from '../SearchBar';
 import FilterSidebar from '../FilterSidebar';
 import ChatWidget from '../ChatWidget';
+import BusinessSubmissionForm from '../BusinessSubmissionForm';
 import { useTheme } from '../../contexts/ThemeContext';
+import { submitBusiness } from '../../services/api';
 import styles from './styles.module.scss';
 
 const strings = {
   title: 'Directorio de Negocios',
   filters: 'Filtros',
   openFilters: 'Abrir filtros',
-  closeFilters: 'Cerrar filtros'
+  closeFilters: 'Cerrar filtros',
+  addBusiness: 'Agregue su negocio'
 };
 
 const Layout: React.FC = () => {
   const [showMobileFilters, setShowMobileFilters] = useState(false);
+  const [showAddBusinessModal, setShowAddBusinessModal] = useState(false);
   const { theme, toggleTheme } = useTheme();
 
   return (
@@ -23,6 +27,13 @@ const Layout: React.FC = () => {
         <h1>{strings.title}</h1>
         <div className={styles.headerControls}>
           <SearchBar />
+          <button
+            className={styles.addBusinessButton}
+            onClick={() => setShowAddBusinessModal(true)}
+            aria-label={strings.addBusiness}
+          >
+            ➕ {strings.addBusiness}
+          </button>
           <button
             className={styles.themeButton}
             onClick={toggleTheme}
@@ -73,6 +84,23 @@ const Layout: React.FC = () => {
       )}
 
       <ChatWidget />
+
+      {/* Add Business Modal */}
+      {showAddBusinessModal && (
+        <BusinessSubmissionForm
+          onSubmit={async (data) => {
+            try {
+              await submitBusiness(data);
+              alert('¡Negocio enviado exitosamente! Será revisado antes de ser aprobado.');
+              setShowAddBusinessModal(false);
+            } catch (error) {
+              console.error('Error submitting business:', error);
+              alert('Error al enviar el negocio. Por favor, inténtalo de nuevo.');
+            }
+          }}
+          onClose={() => setShowAddBusinessModal(false)}
+        />
+      )}
     </div>
   );
 };

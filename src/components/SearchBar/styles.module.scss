@@ -6,12 +6,12 @@
   width: 90%;
 
   @include mixins.tablet {
-    margin-bottom:0;
+    margin-bottom:10px;
     width: 85%;
   }
 
     @include mixins.desktop {
-      margin-bottom: 0;
+      margin-bottom: 10px;
       width: 85%;
     }
 

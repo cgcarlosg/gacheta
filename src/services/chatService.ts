@@ -86,8 +86,7 @@ por lo que no puede proporcionar indicaciones de dirección.`,
         "\n\nNota: El mapa no está conectado a servicios de mapas en línea.";
       suggestions = ["Más detalles", "Buscar similares", "Ver en mapa"];
     }
-  } catch (error) {
-    console.error("Error calling LLM API:", error);
+  } catch {
     response = "Hubo un error al procesar tu mensaje. Por favor, intenta de nuevo.";
   }
 

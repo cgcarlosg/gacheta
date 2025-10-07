@@ -13,22 +13,23 @@ export const mockBusinesses: Business[] = [
     email: 'info@marios.com',
     website: 'https://marios.com',
     description: 'Authentic Italian cuisine with fresh ingredients and traditional recipes.',
-    rating: 4.5,
-    reviewCount: 128,
-    priceRange: '$$',
+    rating: null,
+    reviewCount: null,
+    priceRange: null,
     imageUrl: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=400',
     latitude: 4.817972,
     longitude: -73.637278,
     hours: {
-      Monday: '11:00 AM - 10:00 PM',
-      Tuesday: '11:00 AM - 10:00 PM',
-      Wednesday: '11:00 AM - 10:00 PM',
-      Thursday: '11:00 AM - 10:00 PM',
-      Friday: '11:00 AM - 11:00 PM',
-      Saturday: '12:00 PM - 11:00 PM',
-      Sunday: '12:00 PM - 9:00 PM'
+      Lunes: '11:00 AM - 10:00 PM',
+      Martes: '11:00 AM - 10:00 PM',
+      Miercoles: '11:00 AM - 10:00 PM',
+      Jueves: '11:00 AM - 10:00 PM',
+      Viernes: '11:00 AM - 11:00 PM',
+      Sabado: '12:00 PM - 11:00 PM',
+      Domingo: '12:00 PM - 9:00 PM'
     },
     isOpen: true,
+    isApproved: false,
     tags: ['Italian', 'Pasta', 'Pizza', 'Family Friendly']
   },
  

@@ -72,10 +72,63 @@
     }
   }
 
+  .priceRange {
+    color: variables.$primary-color;
+    font-weight: 500;
+    margin-bottom: variables.$spacing-sm;
+    font-size: 0.875rem;
+  }
+
   .address {
     color: variables.$secondary-color;
     font-size: 0.875rem;
     margin-bottom: variables.$spacing-sm;
+  }
+
+  .contact {
+    display: flex;
+    align-items: center;
+    gap: variables.$spacing-xs;
+    margin-bottom: variables.$spacing-sm;
+
+    .whatsappIcon {
+      height: 1.5rem;
+      width: auto;
+    }
+
+    .phoneNumber {
+      color: variables.$primary-color;
+      font-size: 0.875rem;
+      font-weight: 500;
+    }
+  }
+
+  .website {
+    display: flex;
+    align-items: center;
+    gap: variables.$spacing-xs;
+    margin-bottom: variables.$spacing-sm;
+    cursor: pointer;
+
+    .websiteIcon {
+      font-size: 1rem;
+      color: variables.$primary-color;
+    }
+
+    .websiteLink {
+      color: variables.$primary-color;
+      font-size: 0.875rem;
+      font-weight: 500;
+      text-decoration: underline;
+
+      &:hover {
+        text-decoration: none;
+      }
+    }
+
+    &:hover .websiteLink {
+      text-decoration: none;
+    }
   }
 
   .description {
@@ -83,6 +136,11 @@
     font-size: 0.875rem;
     line-height: 1.4;
     margin-bottom: variables.$spacing-sm;
+    display: -webkit-box;
+    line-clamp: 2;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
   }
 
   .iconContainer {
