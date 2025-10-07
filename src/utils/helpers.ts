@@ -55,6 +55,8 @@ export const truncateText = (text: string, maxLength: number): string => {
   return text.substr(0, maxLength) + '...';
 };
 
+import React from 'react';
+
 export const formatPhoneNumber = (phone: string): string => {
   // Simple formatting - in a real app, use a proper phone number library
   const cleaned = phone.replace(/\D/g, '');
@@ -63,4 +65,36 @@ export const formatPhoneNumber = (phone: string): string => {
     return '(' + match[1] + ') ' + match[2] + '-' + match[3];
   }
   return phone;
+};
+
+// Intersection Observer hook for lazy loading
+export const useIntersectionObserver = (
+  ref: React.RefObject<Element | null>,
+  options: IntersectionObserverInit = {}
+) => {
+  const [isIntersecting, setIsIntersecting] = React.useState(false);
+
+  React.useEffect(() => {
+    const element = ref.current;
+    if (!element) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsIntersecting(entry.isIntersecting);
+      },
+      {
+        threshold: 0.1,
+        rootMargin: '50px',
+        ...options,
+      }
+    );
+
+    observer.observe(element);
+
+    return () => {
+      observer.unobserve(element);
+    };
+  }, [ref, options]);
+
+  return isIntersecting;
 };

@@ -15,7 +15,10 @@ const strings = {
   backButton: '← Volver al Directorio',
   category: 'Categoría:',
   address: 'Dirección:',
-  phone: 'Teléfono:',
+  city: 'Ciudad:',
+  state: 'Departamento:',
+  zipCode: 'Código Postal:',
+  phone: 'Teléfono/Whatsapp:',
   website: 'Sitio web:',
   rating: 'Calificación:',
   reviews: 'reseñas',
@@ -69,7 +72,10 @@ const BusinessDetailPage: React.FC = () => {
           <img src={imageSrc} alt={business.name} className={styles.image} onError={handleImageError} />
           <div className={styles.details}>
             <p><strong>{strings.category}</strong> {business.category}</p>
-            <p><strong>{strings.address}</strong> {business.address}, {business.city}, {business.state} {business.zipCode}</p>
+            <p><strong>{strings.address}</strong> {business.address}</p>
+            <p><strong>{strings.city}</strong> {business.location}</p>
+            <p><strong>{strings.state}</strong> {business.state}</p>
+            <p><strong>{strings.zipCode}</strong> {business.zipCode}</p>
             <p><strong>{strings.phone}</strong> {business.phone}</p>
             {business.website && <p><strong>{strings.website}</strong> <a href={business.website} target="_blank" rel="noopener noreferrer">{business.website}</a></p>}
             {showRating && <p><strong>{strings.rating}</strong> {business.rating} ({business.reviewCount} {strings.reviews})</p>}

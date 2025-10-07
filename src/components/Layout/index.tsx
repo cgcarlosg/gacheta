@@ -1,12 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, Suspense, lazy } from 'react';
 import { Outlet } from 'react-router-dom';
 import SearchBar from '../SearchBar';
 import FilterSidebar from '../FilterSidebar';
-import ChatWidget from '../ChatWidget';
-import BusinessSubmissionForm from '../BusinessSubmissionForm';
 import { useTheme } from '../../contexts/ThemeContext';
 import { submitBusiness } from '../../services/api';
 import styles from './styles.module.scss';
+
+// Lazy load heavy components
+const ChatWidget = lazy(() => import('../ChatWidget'));
+const BusinessSubmissionForm = lazy(() => import('../BusinessSubmissionForm'));
 
 const strings = {
   title: 'Directorio de Negocios',
@@ -83,23 +85,27 @@ const Layout: React.FC = () => {
         </div>
       )}
 
-      <ChatWidget />
+      <Suspense fallback={<div>Loading...</div>}>
+        <ChatWidget />
+      </Suspense>
 
       {/* Add Business Modal */}
       {showAddBusinessModal && (
-        <BusinessSubmissionForm
-          onSubmit={async (data) => {
-            try {
-              await submitBusiness(data);
-              alert('¡Negocio enviado exitosamente! Será revisado antes de ser aprobado.');
-              setShowAddBusinessModal(false);
-            } catch (error) {
-              console.error('Error submitting business:', error);
-              alert('Error al enviar el negocio. Por favor, inténtalo de nuevo.');
-            }
-          }}
-          onClose={() => setShowAddBusinessModal(false)}
-        />
+        <Suspense fallback={<div>Loading form...</div>}>
+          <BusinessSubmissionForm
+            onSubmit={async (data) => {
+              try {
+                await submitBusiness(data);
+                alert('¡Negocio enviado exitosamente! Será revisado antes de ser aprobado.');
+                setShowAddBusinessModal(false);
+              } catch (error) {
+                console.error('Error submitting business:', error);
+                alert('Error al enviar el negocio. Por favor, inténtalo de nuevo.');
+              }
+            }}
+            onClose={() => setShowAddBusinessModal(false)}
+          />
+        </Suspense>
       )}
     </div>
   );

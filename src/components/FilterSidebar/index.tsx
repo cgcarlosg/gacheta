@@ -37,7 +37,7 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({ isMobile = false, onApply
 
   // Dynamically generate filter options from businesses data
   const availableCategories = Array.from(new Set(businesses.map(b => b.category))).filter(Boolean);
-  const availableLocations = Array.from(new Set(businesses.map(b => b.city))).filter(Boolean);
+  const availableLocations = Array.from(new Set(businesses.map(b => b.location))).filter(Boolean);
   const availableRatings = Array.from(new Set(
     businesses
       .filter(b => b.rating != null && b.rating > 0)

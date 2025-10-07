@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import { useFilters } from '../../hooks/useFilters';
+import { debounce } from '../../utils/helpers';
 import styles from './styles.module.scss';
 
 const strings = {
@@ -10,10 +11,18 @@ const SearchBar: React.FC = () => {
   const { setFilters } = useFilters();
   const [searchValue, setSearchValue] = useState('');
 
-  const handleSearchChange = (value: string) => {
+  // Create debounced function with proper dependencies
+  const debouncedSetFilters = useMemo(
+    () => debounce((value: string) => {
+      setFilters({ searchQuery: value || undefined });
+    }, 300),
+    [setFilters]
+  );
+
+  const handleSearchChange = useCallback((value: string) => {
     setSearchValue(value);
-    setFilters({ searchQuery: value || undefined });
-  };
+    debouncedSetFilters(value);
+  }, [debouncedSetFilters]);
 
   return (
     <div className={styles.searchBar}>

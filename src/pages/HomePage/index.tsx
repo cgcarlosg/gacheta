@@ -10,11 +10,10 @@ const strings = {
 };
 
 const HomePage: React.FC = () => {
-  const { businesses, loading, error, fetchBusinesses } = useBusinesses();
+  const { businesses, loading, error, hasMore, loadMore, fetchBusinesses } = useBusinesses();
   const { filters } = useFilters();
 
   useEffect(() => {
-    console.log('HomePage: Fetching businesses with filters:', filters);
     fetchBusinesses(filters);
   }, [filters, fetchBusinesses]);
 
@@ -23,7 +22,12 @@ const HomePage: React.FC = () => {
       <PromotionsBanner />
       <h2>{strings.title}</h2>
       {error && <div className={styles.error}>{error}</div>}
-      <BusinessGrid businesses={businesses} loading={loading} />
+      <BusinessGrid
+        businesses={businesses}
+        loading={loading}
+        hasMore={hasMore}
+        onLoadMore={loadMore}
+      />
     </div>
   );
 };

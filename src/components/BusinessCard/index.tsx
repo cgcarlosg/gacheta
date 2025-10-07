@@ -1,21 +1,21 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { Link } from 'react-router-dom';
 import type { Business } from '../../types/business';
-import { useBusinesses } from '../../hooks/useBusinesses';
+import { useIntersectionObserver } from '../../utils/helpers';
 import { CATEGORY_ICONS } from '../../utils/constants';
 import styles from './styles.module.scss';
 import whatsapp from '../../assets/whatsappic.png'
 
 interface BusinessCardProps {
   business: Business;
+  hasRatings: boolean;
+  hasPriceRanges: boolean;
 }
 
-const BusinessCard: React.FC<BusinessCardProps> = ({ business }) => {
-  const { businesses } = useBusinesses();
+const BusinessCard: React.FC<BusinessCardProps> = React.memo(({ business, hasRatings, hasPriceRanges }) => {
   const [imageSrc, setImageSrc] = React.useState(business.imageUrl || 'https://picsum.photos/300/200?random=1');
-
-  const hasRatings = businesses.some(b => b.rating != null && b.rating > 0);
-  const hasPriceRanges = businesses.some(b => b.priceRange != null);
+  const imageRef = useRef<HTMLImageElement>(null);
+  const isVisible = useIntersectionObserver(imageRef);
 
   const handleImageError = () => {
     setImageSrc('https://picsum.photos/300/200?random=1');
@@ -34,7 +34,14 @@ const BusinessCard: React.FC<BusinessCardProps> = ({ business }) => {
   return (
     <Link to={`/business/${business.id}`} className={styles.businessCard}>
       <div className={styles.imageContainer}>
-        <img src={imageSrc} alt={business.name} className={styles.image} onError={handleImageError} loading="lazy" />
+        <img
+          ref={imageRef}
+          src={isVisible ? imageSrc : undefined}
+          alt={business.name}
+          className={styles.image}
+          onError={handleImageError}
+          loading="lazy"
+        />
         <div className={styles.iconContainer}>
           <span className={styles.categoryIcon}>{CATEGORY_ICONS[business.category as keyof typeof CATEGORY_ICONS]}</span>
           <span className={`${styles.status} ${business.isOpen ? styles.open : styles.closed}`}>{business.isOpen ? '🟢' : '🔴'}</span>
@@ -53,25 +60,31 @@ const BusinessCard: React.FC<BusinessCardProps> = ({ business }) => {
             {business.priceRange}
           </div>
         )}
-        <p className={styles.address}>{business.address}, {business.city}</p>
+        <p className={styles.address}>{business.address}, {business.location}</p>
         {business.phone && (
           <div className={styles.contact}>
             <img className={styles.whatsappIcon} src={whatsapp}/>
             <span className={styles.phoneNumber}>{business.phone}</span>
           </div>
         )}
-        {business.website && (
-          <div className={styles.website} onClick={() => window.open(business.website, '_blank')}>
-            <span className={styles.websiteIcon}>🌐</span>
-            <span className={styles.websiteLink}>
-              {business.website}
-            </span>
-          </div>
-        )}
+        <div className={styles.website}>
+          <span className={styles.websiteIcon}>🌐</span>
+          <span className={styles.websiteLink}>
+            {business.website ? (
+              <span onClick={() => window.open(business.website, '_blank')} style={{cursor: 'pointer'}}>
+                {business.website}
+              </span>
+            ) : (
+              'Sin contenido web'
+            )}
+          </span>
+        </div>
         <p className={styles.description}>{business.description}</p>
       </div>
     </Link>
   );
-};
+});
+
+BusinessCard.displayName = 'BusinessCard';
 
 export default BusinessCard;

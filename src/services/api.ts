@@ -7,7 +7,7 @@ interface BusinessDBRow {
   name: string;
   category: string;
   address: string;
-  city: string;
+  location: string;
   state: string;
   zip_code: string;
   phone: string;
@@ -26,18 +26,21 @@ interface BusinessDBRow {
   tags: string[];
   special_request: string | null;
   is_approved: boolean;
+  created_at: string;
 }
 
 export const getBusinesses = async (filters?: FilterOptions): Promise<Business[]> => {
 
-  let query = supabase.from('businesses').select('*').eq('is_approved', true);
+  // Select only the columns we actually need to reduce data transfer
+  const columns = 'id,name,category,address,location,state,zip_code,phone,email,website,description,rating,review_count,price_range,image_url,image_filename,latitude,longitude,hours,is_open,tags,special_request,is_approved,created_at';
+  let query = supabase.from('businesses').select(columns).eq('is_approved', true);
 
   if (filters) {
     if (filters.category) {
       query = query.eq('category', filters.category);
     }
     if (filters.location) {
-      query = query.ilike('city', `%${filters.location}%`);
+      query = query.ilike('location', `%${filters.location}%`);
     }
     if (filters.rating) {
       query = query.gte('rating', filters.rating);
@@ -47,9 +50,13 @@ export const getBusinesses = async (filters?: FilterOptions): Promise<Business[]
     }
     if (filters.searchQuery) {
       const searchQuery = filters.searchQuery.toLowerCase();
-      query = query.or(`name.ilike.%${searchQuery}%,description.ilike.%${searchQuery}%,category.ilike.%${searchQuery}%,tags.cs.{${searchQuery}}`);
+      // Simplified search - removed expensive tags JSON search
+      query = query.or(`name.ilike.%${searchQuery}%,description.ilike.%${searchQuery}%,category.ilike.%${searchQuery}%`);
     }
   }
+
+  // Add reasonable limit to prevent timeout
+  query = query.limit(20);
 
   const { data, error } = await query;
 
@@ -97,46 +104,34 @@ export interface Promotion {
 
 export const getActivePromotions = async (): Promise<Promotion[]> => {
   try {
-    // First try a simple query to check if table exists and has data
-    const { data: allData, error: allError } = await supabase
+    const now = new Date().toISOString();
+    const { data, error } = await supabase
       .from('promotions')
       .select('*')
-      .limit(10);
+      .eq('is_active', true)
+      .lte('start_date', now)
+      .or(`end_date.is.null,end_date.gte.${now}`)
+      .order('priority', { ascending: false })
+      .order('created_at', { ascending: false })
+      .limit(10); // Limit to prevent excessive data
 
-    if (allError) {
+    if (error) {
       return [];
     }
 
-    // If we have data, apply the filters
-    if (allData && allData.length > 0) {
-      const now = new Date().toISOString();
-      const filteredData = allData.filter(row =>
-        row.is_active === true &&
-        new Date(row.start_date) <= new Date(now) &&
-        (row.end_date === null || new Date(row.end_date) >= new Date(now))
-      ).sort((a, b) => {
-        if (b.priority !== a.priority) {
-          return b.priority - a.priority;
-        }
-        return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
-      });
-
-      return filteredData.map(row => ({
-        id: row.id,
-        title: row.title,
-        description: row.description,
-        imageUrl: row.image_url,
-        linkUrl: row.link_url,
-        isActive: row.is_active,
-        startDate: row.start_date,
-        endDate: row.end_date,
-        priority: row.priority,
-        createdAt: row.created_at,
-        updatedAt: row.updated_at
-      }));
-    }
-
-    return [];
+    return (data || []).map(row => ({
+      id: row.id,
+      title: row.title,
+      description: row.description,
+      imageUrl: row.image_url,
+      linkUrl: row.link_url,
+      isActive: row.is_active,
+      startDate: row.start_date,
+      endDate: row.end_date,
+      priority: row.priority,
+      createdAt: row.created_at,
+      updatedAt: row.updated_at
+    }));
   } catch {
     return [];
   }
@@ -148,7 +143,7 @@ export const submitBusiness = async (businessData: Omit<Business, 'id' | 'isOpen
     name: businessData.name,
     category: businessData.category,
     address: businessData.address,
-    city: businessData.city,
+    location: businessData.location,
     state: businessData.state,
     zip_code: businessData.zipCode,
     phone: businessData.phone,
@@ -223,7 +218,7 @@ function transformBusinessFromDB(row: BusinessDBRow): Business {
     name: row.name,
     category: row.category,
     address: row.address,
-    city: row.city,
+    location: row.location,
     state: row.state,
     zipCode: row.zip_code,
     phone: row.phone,
@@ -241,6 +236,7 @@ function transformBusinessFromDB(row: BusinessDBRow): Business {
     isOpen: isOpen,
     tags: row.tags,
     specialRequest: specialRequest,
-    isApproved: row.is_approved
+    isApproved: row.is_approved,
+    createdAt: row.created_at
   };
 }
