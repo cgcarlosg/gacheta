@@ -12,13 +12,13 @@ interface BusinessCardProps {
 
 const BusinessCard: React.FC<BusinessCardProps> = ({ business }) => {
   const { businesses } = useBusinesses();
-  const [imageSrc, setImageSrc] = React.useState(business.imageUrl || 'https://via.placeholder.com/300x200?text=No+Image');
+  const [imageSrc, setImageSrc] = React.useState(business.imageUrl || 'https://picsum.photos/300/200?random=1');
 
   const hasRatings = businesses.some(b => b.rating != null && b.rating > 0);
   const hasPriceRanges = businesses.some(b => b.priceRange != null);
 
   const handleImageError = () => {
-    setImageSrc('https://via.placeholder.com/300x200?text=No+Image');
+    setImageSrc('https://picsum.photos/300/200?random=1');
   };
 
   const renderStars = (rating: number) => {
@@ -58,6 +58,14 @@ const BusinessCard: React.FC<BusinessCardProps> = ({ business }) => {
           <div className={styles.contact}>
             <img className={styles.whatsappIcon} src={whatsapp}/>
             <span className={styles.phoneNumber}>{business.phone}</span>
+          </div>
+        )}
+        {business.website && (
+          <div className={styles.website} onClick={() => window.open(business.website, '_blank')}>
+            <span className={styles.websiteIcon}>🌐</span>
+            <span className={styles.websiteLink}>
+              {business.website}
+            </span>
           </div>
         )}
         <p className={styles.description}>{business.description}</p>

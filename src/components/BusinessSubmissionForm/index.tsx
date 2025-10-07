@@ -26,6 +26,7 @@ interface BusinessFormData {
   tags: string[];
   rating: number | null;
   reviewCount: number | null;
+  specialRequest?: string;
 }
 
 interface DayHours {
@@ -120,13 +121,15 @@ const BusinessSubmissionForm: React.FC<BusinessSubmissionFormProps> = ({ onSubmi
     },
     tags: [],
     rating: null,
-    reviewCount: null
+    reviewCount: null,
+    specialRequest: ''
   });
 
   const [useMap, setUseMap] = useState(false);
   const [locationError, setLocationError] = useState('');
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
-  const [validationErrors, setValidationErrors] = useState<string[]>([]);
+  const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+  const [generalErrors, setGeneralErrors] = useState<string[]>([]);
 
   // State for day hours
   const [dayHours, setDayHours] = useState<Record<string, DayHours>>({
@@ -210,31 +213,64 @@ const BusinessSubmissionForm: React.FC<BusinessSubmissionFormProps> = ({ onSubmi
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    setValidationErrors([]);
+  const validateForm = () => {
+    const errors: Record<string, string> = {};
+    const generalErrs: string[] = [];
 
-    // Check if at least one day is open
-    const hasOpenDay = Object.values(dayHours).some(day => day.isOpen);
-    if (!hasOpenDay) {
-      setValidationErrors(['Debe seleccionar al menos un día de apertura']);
-      return;
+    // Required field validation
+    if (!formData.name.trim()) {
+      errors.name = 'Este campo es obligatorio';
+    }
+    if (!formData.address.trim()) {
+      errors.address = 'Este campo es obligatorio';
+    }
+    if (!formData.phone.trim()) {
+      errors.phone = 'Este campo es obligatorio';
+    } else if (!/^[0-9]{10}$/.test(formData.phone)) {
+      errors.phone = 'El teléfono debe tener exactamente 10 dígitos numéricos';
+    }
+    if (!formData.description.trim()) {
+      errors.description = 'Este campo es obligatorio';
+    } else if (formData.description.length > 500) {
+      errors.description = 'La descripción no puede tener más de 500 caracteres';
     }
 
-    // Convert dayHours to string format
-    const hours: Record<string, string> = {};
-    Object.entries(dayHours).forEach(([day, dayData]) => {
-      if (dayData.isOpen) {
-        const openTime12 = formatTime12(dayData.openTime);
-        const closeTime12 = formatTime12(dayData.closeTime);
-        hours[day] = `${openTime12} - ${closeTime12}`;
-      } else {
-        hours[day] = 'Closed';
-      }
-    });
+    // Location validation
+    if (formData.latitude === 0 || formData.longitude === 0) {
+      errors.location = 'Debe seleccionar una ubicación en el mapa';
+    }
 
-    const dataToSubmit = { ...formData, hours };
-    onSubmit(dataToSubmit);
+    // Hours validation
+    const hasOpenDay = Object.values(dayHours).some(day => day.isOpen);
+    if (!hasOpenDay) {
+      generalErrs.push('Debe seleccionar al menos un día de apertura');
+    }
+
+    setFieldErrors(errors);
+    setGeneralErrors(generalErrs);
+
+    return Object.keys(errors).length === 0 && generalErrs.length === 0;
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (validateForm()) {
+      // Convert dayHours to string format
+      const hours: Record<string, string> = {};
+      Object.entries(dayHours).forEach(([day, dayData]) => {
+        if (dayData.isOpen) {
+          const openTime12 = formatTime12(dayData.openTime);
+          const closeTime12 = formatTime12(dayData.closeTime);
+          hours[day] = `${openTime12} - ${closeTime12}`;
+        } else {
+          hours[day] = 'Closed';
+        }
+      });
+
+      const dataToSubmit = { ...formData, hours };
+      onSubmit(dataToSubmit);
+    }
   };
 
   // Helper function to format 24h time to 12h
@@ -267,9 +303,9 @@ const BusinessSubmissionForm: React.FC<BusinessSubmissionFormProps> = ({ onSubmi
             ×
           </button>
         </div>
-        {validationErrors.length > 0 && (
+        {generalErrors.length > 0 && (
           <div className={styles.errorMessages}>
-            {validationErrors.map((error, index) => (
+            {generalErrors.map((error, index) => (
               <p key={index} className={styles.error}>{error}</p>
             ))}
           </div>
@@ -282,9 +318,8 @@ const BusinessSubmissionForm: React.FC<BusinessSubmissionFormProps> = ({ onSubmi
               name="name"
               value={formData.name}
               onChange={handleInputChange}
-              required
-              title="Este campo es obligatorio"
             />
+            {fieldErrors.name && <p className={styles.fieldError}>{fieldErrors.name}</p>}
           </div>
 
           <div className={styles.field}>
@@ -309,9 +344,8 @@ const BusinessSubmissionForm: React.FC<BusinessSubmissionFormProps> = ({ onSubmi
               name="address"
               value={formData.address}
               onChange={handleInputChange}
-              required
-              title="Este campo es obligatorio"
             />
+            {fieldErrors.address && <p className={styles.fieldError}>{fieldErrors.address}</p>}
           </div>
 
           <div className={styles.row}>
@@ -352,10 +386,8 @@ const BusinessSubmissionForm: React.FC<BusinessSubmissionFormProps> = ({ onSubmi
               name="phone"
               value={formData.phone}
               onChange={handleInputChange}
-              required
-              pattern="[0-9]{10}"
-              title="El teléfono debe tener exactamente 10 dígitos numéricos"
             />
+            {fieldErrors.phone && <p className={styles.fieldError}>{fieldErrors.phone}</p>}
           </div>
 
           <div className={styles.field}>
@@ -384,9 +416,12 @@ const BusinessSubmissionForm: React.FC<BusinessSubmissionFormProps> = ({ onSubmi
               name="description"
               value={formData.description}
               onChange={handleInputChange}
-              required
-              title="Este campo es obligatorio"
+              maxLength={500}
             />
+            <div className={styles.fieldFooter}>
+              <span className={styles.charCount}>{formData.description.length}/500</span>
+              {fieldErrors.description && <p className={styles.fieldError}>{fieldErrors.description}</p>}
+            </div>
           </div>
 
           <div className={styles.field}>
@@ -455,6 +490,7 @@ const BusinessSubmissionForm: React.FC<BusinessSubmissionFormProps> = ({ onSubmi
                 required
               />
             </div>
+            {fieldErrors.location && <p className={styles.fieldError}>{fieldErrors.location}</p>}
             {useMap && (
               <div className={styles.mapContainer}>
                 <MapContainer center={[4.817530, -73.635871]} zoom={13} style={{ height: '300px', width: '100%' }}>
@@ -510,6 +546,17 @@ const BusinessSubmissionForm: React.FC<BusinessSubmissionFormProps> = ({ onSubmi
                 )}
               </div>
             ))}
+          </div>
+
+          <div className={styles.field}>
+            <label>Solicitud Especial (Opcional)</label>
+            <textarea
+              name="specialRequest"
+              value={formData.specialRequest}
+              onChange={handleInputChange}
+              placeholder="Si tienes alguna solicitud especial o comentario adicional..."
+              rows={3}
+            />
           </div>
 
           <div className={styles.actions}>

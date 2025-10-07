@@ -22,6 +22,7 @@ export interface Business {
   };
   isOpen: boolean;
   tags: string[];
+  specialRequest?: string;
   isApproved: boolean;
 }
 

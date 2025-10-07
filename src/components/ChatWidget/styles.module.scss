@@ -27,7 +27,7 @@
   .chatWindow {
     width: 350px;
     height: 500px;
-    background: variables.$white;
+    background: #f8f9fa;
     border-radius: variables.$border-radius;
     box-shadow: variables.$shadow-hover;
     display: flex;
@@ -40,15 +40,22 @@
 
     .chatHeader {
       padding: variables.$spacing-md;
-      background: variables.$primary-color;
+      background: variables.$secondary-color;
       color: variables.$white;
       border-radius: variables.$border-radius variables.$border-radius 0 0;
       display: flex;
       justify-content: space-between;
-      align-items: center;
+      align-items: flex-start;
 
       h4 {
+        margin: 0 0 variables.$spacing-xs 0;
+      }
+
+      .subtitle {
+        font-size: 0.875rem;
+        line-height: 1.4;
         margin: 0;
+        opacity: 0.9;
       }
 
       button {
@@ -57,55 +64,66 @@
         color: variables.$white;
         font-size: 1.5rem;
         cursor: pointer;
+        margin-left: variables.$spacing-sm;
       }
     }
 
-    .messages {
+    .content {
       flex: 1;
-      padding: variables.$spacing-md;
-      overflow-y: auto;
-
-      .message {
-        margin-bottom: variables.$spacing-sm;
-        padding: variables.$spacing-sm;
-        border-radius: variables.$border-radius;
-        max-width: 80%;
-
-        &.user {
-          background: variables.$primary-color;
-          color: variables.$white;
-          align-self: flex-end;
-          margin-left: auto;
-        }
-
-        &.ai {
-          background: variables.$light-color;
-          color: variables.$dark-color;
-        }
-      }
-
-      .typing {
-        font-style: italic;
-        color: variables.$secondary-color;
-      }
+      display: flex;
+      flex-direction: column;
     }
 
     .inputArea {
       padding: variables.$spacing-md;
-      border-top: 1px solid variables.$light-color;
-      display: flex;
+      flex: 1;
 
-      .input {
-        flex: 1;
+      .textarea {
+        width: 100%;
         padding: variables.$spacing-sm;
         border: 1px solid variables.$light-color;
         border-radius: variables.$border-radius;
-        margin-right: variables.$spacing-sm;
+        resize: vertical;
+        min-height: 100px;
+        font-family: inherit;
+        font-size: 0.875rem;
+
+        &:focus {
+          outline: none;
+          border-color: variables.$primary-color;
+        }
       }
+    }
+
+    .buttonArea {
+      padding: 0 variables.$spacing-md variables.$spacing-md;
+      text-align: center;
 
       .sendButton {
         @include mixins.button;
         padding: variables.$spacing-sm variables.$spacing-md;
+        width: 100%;
+
+        &:disabled {
+          background: variables.$secondary-color;
+          cursor: not-allowed;
+        }
+      }
+    }
+
+    .thankYou {
+      padding: variables.$spacing-lg;
+      text-align: center;
+
+      h4 {
+        color: variables.$primary-color;
+        margin: 0 0 variables.$spacing-md 0;
+      }
+
+      p {
+        color: variables.$dark-color;
+        line-height: 1.5;
+        margin: 0;
       }
     }
   }

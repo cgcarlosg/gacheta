@@ -66,12 +66,13 @@
 
 .errorMessages {
   background: variables.$danger-color;
-  color: variables.$white;
+  color: white;
   padding: variables.$spacing-sm variables.$spacing-md;
   border-radius: variables.$border-radius;
   margin-bottom: variables.$spacing-md;
 
   .error {
+    color:  variables.$white;
     margin: 0;
     font-size: 0.875rem;
     font-weight: 500;
@@ -104,6 +105,25 @@
       outline: none;
       border-color: variables.$primary-color;
     }
+  }
+
+  .fieldError {
+    color: variables.$danger-color;
+    font-size: 0.875rem;
+    margin-top: variables.$spacing-xs;
+    margin-bottom: 0;
+  }
+
+  .fieldFooter {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: variables.$spacing-xs;
+  }
+
+  .charCount {
+    font-size: 0.75rem;
+    color: variables.$secondary-color;
   }
 
   textarea {

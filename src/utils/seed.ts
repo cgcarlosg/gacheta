@@ -6,15 +6,6 @@ import { mockBusinesses } from '../data/businesses';
 config({ path: '.env.local' });
 
 async function seed() {
-  console.log('Starting seed process...');
-  console.log('SUPABASE_URL:', process.env.VITE_SUPABASE_URL);
-  console.log('SUPABASE_ANON_KEY exists:', !!process.env.VITE_SUPABASE_ANON_KEY);
-
-  // Test connection first
-  console.log('Testing Supabase connection...');
-  const { data: testData, error: testError } = await supabase.from('businesses').select('count').limit(1);
-  console.log('Connection test result:', { testData, testError });
-
   const uuids = [
     '550e8400-e29b-41d4-a716-446655440001',
     '550e8400-e29b-41d4-a716-446655440002',
@@ -61,20 +52,10 @@ async function seed() {
     tags: b.tags
   }));
 
-  console.log(`Attempting to insert ${mapped.length} businesses...`);
-
   const { error } = await supabase.from('businesses').insert(mapped);
 
   if (error) {
     console.error('Seeding failed:', error);
-    console.error('Error details:', {
-      message: error.message,
-      details: error.details,
-      hint: error.hint,
-      code: error.code
-    });
-  } else {
-    console.log('Seeding succeeded!');
   }
 }
 

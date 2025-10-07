@@ -24,11 +24,11 @@ interface BusinessDBRow {
   hours: Record<string, string>;
   is_open: boolean;
   tags: string[];
+  special_request: string | null;
   is_approved: boolean;
 }
 
 export const getBusinesses = async (filters?: FilterOptions): Promise<Business[]> => {
-  console.log('API: getBusinesses called with filters:', filters);
 
   let query = supabase.from('businesses').select('*').eq('is_approved', true);
 
@@ -60,7 +60,6 @@ export const getBusinesses = async (filters?: FilterOptions): Promise<Business[]
 
   // Transform snake_case to camelCase
   const transformed = (data || []).map(transformBusinessFromDB);
-  console.log('Transformed businesses:', transformed.length);
   return transformed;
 };
 
@@ -95,94 +94,51 @@ export interface Promotion {
   updatedAt: string;
 }
 
-const mockPromotions: Promotion[] = [
-  {
-    id: '1',
-    title: '¡Oferta Especial de Verano!',
-    description: 'Descuentos del 20% en todos los restaurantes participantes. ¡Aprovecha esta oportunidad única!',
-    imageUrl: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=400',
-    linkUrl: undefined,
-    isActive: true,
-    startDate: '2025-01-01T00:00:00Z',
-    endDate: undefined,
-    priority: 10,
-    createdAt: '2025-01-01T00:00:00Z',
-    updatedAt: '2025-01-01T00:00:00Z'
-  },
-  {
-    id: '2',
-    title: 'Nuevo Café en el Centro',
-    description: 'Descubre nuestro nuevo local con cafés especiales y ambiente acogedor.',
-    imageUrl: 'https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=400',
-    linkUrl: '/business/2',
-    isActive: true,
-    startDate: '2025-01-01T00:00:00Z',
-    endDate: undefined,
-    priority: 5,
-    createdAt: '2025-01-01T00:00:00Z',
-    updatedAt: '2025-01-01T00:00:00Z'
-  },
-   {
-    id: '3',
-    title: '¡Oferta Especial de Verano!',
-    description: 'Descuentos del 20% en todos los restaurantes participantes. ¡Aprovecha esta oportunidad única!',
-    imageUrl: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=400',
-    linkUrl: undefined,
-    isActive: true,
-    startDate: '2025-01-01T00:00:00Z',
-    endDate: undefined,
-    priority: 10,
-    createdAt: '2025-01-01T00:00:00Z',
-    updatedAt: '2025-01-01T00:00:00Z'
-  },
-  {
-    id: '4',
-    title: 'Nuevo Café en el Centro',
-    description: 'Descubre nuestro nuevo local con cafés especiales y ambiente acogedor.',
-    imageUrl: 'https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=400',
-    linkUrl: '/business/2',
-    isActive: true,
-    startDate: '2025-01-01T00:00:00Z',
-    endDate: undefined,
-    priority: 5,
-    createdAt: '2025-01-01T00:00:00Z',
-    updatedAt: '2025-01-01T00:00:00Z'
-  }
-];
 
 export const getActivePromotions = async (): Promise<Promotion[]> => {
   try {
-    const now = new Date().toISOString();
-    const { data, error } = await supabase
+    // First try a simple query to check if table exists and has data
+    const { data: allData, error: allError } = await supabase
       .from('promotions')
       .select('*')
-      .eq('is_active', true)
-      .lte('start_date', now)
-      .or(`end_date.is.null,end_date.gte.${now}`)
-      .order('priority', { ascending: false })
-      .order('created_at', { ascending: false });
+      .limit(10);
 
-    if (error) {
-      console.warn('Promotions table not found or error, using mock data:', error.message);
-      return mockPromotions;
+    if (allError) {
+      return [];
     }
 
-    return (data || []).map(row => ({
-      id: row.id,
-      title: row.title,
-      description: row.description,
-      imageUrl: row.image_url,
-      linkUrl: row.link_url,
-      isActive: row.is_active,
-      startDate: row.start_date,
-      endDate: row.end_date,
-      priority: row.priority,
-      createdAt: row.created_at,
-      updatedAt: row.updated_at
-    }));
-  } catch (error) {
-    console.warn('Error fetching promotions, using mock data:', error);
-    return mockPromotions;
+    // If we have data, apply the filters
+    if (allData && allData.length > 0) {
+      const now = new Date().toISOString();
+      const filteredData = allData.filter(row =>
+        row.is_active === true &&
+        new Date(row.start_date) <= new Date(now) &&
+        (row.end_date === null || new Date(row.end_date) >= new Date(now))
+      ).sort((a, b) => {
+        if (b.priority !== a.priority) {
+          return b.priority - a.priority;
+        }
+        return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+      });
+
+      return filteredData.map(row => ({
+        id: row.id,
+        title: row.title,
+        description: row.description,
+        imageUrl: row.image_url,
+        linkUrl: row.link_url,
+        isActive: row.is_active,
+        startDate: row.start_date,
+        endDate: row.end_date,
+        priority: row.priority,
+        createdAt: row.created_at,
+        updatedAt: row.updated_at
+      }));
+    }
+
+    return [];
+  } catch {
+    return [];
   }
 };
 
@@ -209,6 +165,7 @@ export const submitBusiness = async (businessData: Omit<Business, 'id' | 'isOpen
     hours: businessData.hours,
     is_open: null, // Always null for new submissions
     tags: businessData.tags,
+    special_request: businessData.specialRequest || null,
     is_approved: false // Always false for new submissions
   };
 
@@ -220,16 +177,46 @@ export const submitBusiness = async (businessData: Omit<Business, 'id' | 'isOpen
   }
 };
 
+// Submit a special request
+export const submitSpecialRequest = async (requestData: { message: string; whatsapp?: string }): Promise<void> => {
+  const dbData = {
+    special_request: requestData.message,
+    whatsapp_number: requestData.whatsapp,
+    created_at: new Date().toISOString()
+  };
+
+  const { error } = await supabase.from('special_requests').insert([dbData]);
+
+  if (error) {
+    console.error('Error submitting special request:', error);
+    throw new Error(`Failed to submit special request: ${error.message}`);
+  }
+};
+
+// Submit directorio solicitud (special request)
+export const submitDirectorioSolicitud = async (message: string): Promise<void> => {
+  const dbData = {
+    message: message,
+    created_at: new Date().toISOString()
+  };
+
+  const { error } = await supabase.from('directorio_solicitudes').insert([dbData]);
+
+  if (error) {
+    console.error('Error submitting directorio solicitud:', error);
+    throw new Error(`Failed to submit directorio solicitud: ${error.message}`);
+  }
+};
+
 // Helper function to transform DB row to Business type
 function transformBusinessFromDB(row: BusinessDBRow): Business {
-  console.log('Hours for', row.name, ':', row.hours);
   const isOpen = isBusinessOpen(row.hours);
-  console.log('isOpen calculated:', isOpen);
 
   // Handle string "null" as actual null
   const rating = row.rating === null || row.rating === undefined ? null : row.rating;
   const reviewCount = row.review_count === null || row.review_count === undefined ? null : row.review_count;
   const priceRange = row.price_range === null || row.price_range === undefined || row.price_range === 'null' ? null : row.price_range as Business['priceRange'];
+  const specialRequest = row.special_request === null ? undefined : row.special_request;
 
   return {
     id: row.id,
@@ -253,6 +240,7 @@ function transformBusinessFromDB(row: BusinessDBRow): Business {
     hours: row.hours,
     isOpen: isOpen,
     tags: row.tags,
+    specialRequest: specialRequest,
     isApproved: row.is_approved
   };
 }
