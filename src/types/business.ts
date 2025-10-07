@@ -3,7 +3,7 @@ export interface Business {
   name: string;
   category: string;
   address: string;
-  city: string;
+  location: string;
   state: string;
   zipCode: string;
   phone: string;
@@ -24,6 +24,7 @@ export interface Business {
   tags: string[];
   specialRequest?: string;
   isApproved: boolean;
+  createdAt?: string;
 }
 
 export type BusinessCategory =

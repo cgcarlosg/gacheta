@@ -6,7 +6,7 @@ export const mockBusinesses: Business[] = [
     name: 'Saionary',
     category: 'restaurants',
     address: 'cl. 6 # 4-47',
-    city: 'Downtown',
+    location: 'Downtown',
     state: 'CA',
     zipCode: '251230',
     phone: '(555) 123-4567',

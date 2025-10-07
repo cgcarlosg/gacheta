@@ -10,7 +10,7 @@ interface BusinessFormData {
   name: string;
   category: BusinessCategory;
   address: string;
-  city: string;
+  location: string;
   state: string;
   zipCode: string;
   phone: string;
@@ -52,7 +52,7 @@ const strings = {
     name: 'Nombre del Negocio',
     category: 'Categoría',
     address: 'Dirección',
-    city: 'Ciudad',
+    location: 'Ubicación',
     state: 'Estado',
     zipCode: 'Código Postal',
     phone: 'Teléfono/Whatsapp',
@@ -98,7 +98,7 @@ const BusinessSubmissionForm: React.FC<BusinessSubmissionFormProps> = ({ onSubmi
     name: '',
     category: 'otros' as BusinessCategory,
     address: '',
-    city: 'Gachetá',
+    location: '',
     state: 'Cundinamarca',
     zipCode: '251230',
     phone: '',
@@ -130,6 +130,7 @@ const BusinessSubmissionForm: React.FC<BusinessSubmissionFormProps> = ({ onSubmi
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const [generalErrors, setGeneralErrors] = useState<string[]>([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // State for day hours
   const [dayHours, setDayHours] = useState<Record<string, DayHours>>({
@@ -221,6 +222,9 @@ const BusinessSubmissionForm: React.FC<BusinessSubmissionFormProps> = ({ onSubmi
     if (!formData.name.trim()) {
       errors.name = 'Este campo es obligatorio';
     }
+    if (!formData.location.trim()) {
+      errors.location = 'Este campo es obligatorio';
+    }
     if (!formData.address.trim()) {
       errors.address = 'Este campo es obligatorio';
     }
@@ -252,24 +256,29 @@ const BusinessSubmissionForm: React.FC<BusinessSubmissionFormProps> = ({ onSubmi
     return Object.keys(errors).length === 0 && generalErrs.length === 0;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (validateForm()) {
-      // Convert dayHours to string format
-      const hours: Record<string, string> = {};
-      Object.entries(dayHours).forEach(([day, dayData]) => {
-        if (dayData.isOpen) {
-          const openTime12 = formatTime12(dayData.openTime);
-          const closeTime12 = formatTime12(dayData.closeTime);
-          hours[day] = `${openTime12} - ${closeTime12}`;
-        } else {
-          hours[day] = 'Closed';
-        }
-      });
+      setIsSubmitting(true);
+      try {
+        // Convert dayHours to string format
+        const hours: Record<string, string> = {};
+        Object.entries(dayHours).forEach(([day, dayData]) => {
+          if (dayData.isOpen) {
+            const openTime12 = formatTime12(dayData.openTime);
+            const closeTime12 = formatTime12(dayData.closeTime);
+            hours[day] = `${openTime12} - ${closeTime12}`;
+          } else {
+            hours[day] = 'Closed';
+          }
+        });
 
-      const dataToSubmit = { ...formData, hours };
-      onSubmit(dataToSubmit);
+        const dataToSubmit = { ...formData, hours };
+        await onSubmit(dataToSubmit);
+      } finally {
+        setIsSubmitting(false);
+      }
     }
   };
 
@@ -350,13 +359,19 @@ const BusinessSubmissionForm: React.FC<BusinessSubmissionFormProps> = ({ onSubmi
 
           <div className={styles.row}>
             <div className={styles.field}>
-              <label>{strings.fields.city}</label>
-              <input
-                type="text"
-                name="city"
-                value={formData.city}
-                readOnly
-              />
+              <label>{strings.fields.location} *</label>
+              <select
+                name="location"
+                value={formData.location}
+                onChange={handleInputChange}
+                required
+              >
+                <option value="" disabled>Seleccione</option>
+                <option value="Vereda">Vereda</option>
+                <option value="Centro">Centro</option>
+                <option value="Alrededor del pueblo">Alrededor del pueblo</option>
+              </select>
+              {fieldErrors.location && <p className={styles.fieldError}>{fieldErrors.location}</p>}
             </div>
             <div className={styles.field}>
               <label>{strings.fields.state}</label>
@@ -560,8 +575,17 @@ const BusinessSubmissionForm: React.FC<BusinessSubmissionFormProps> = ({ onSubmi
           </div>
 
           <div className={styles.actions}>
-            <button type="button" onClick={onClose}>{strings.cancel}</button>
-            <button type="submit">{strings.submit}</button>
+            <button type="button" onClick={onClose} disabled={isSubmitting}>{strings.cancel}</button>
+            <button type="submit" disabled={isSubmitting}>
+              {isSubmitting ? (
+                <>
+                  <span className={styles.spinner}></span>
+                  Enviando...
+                </>
+              ) : (
+                strings.submit
+              )}
+            </button>
           </div>
         </form>
       </div>

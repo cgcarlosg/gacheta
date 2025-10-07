@@ -34,7 +34,7 @@ async function seed() {
     name: b.name,
     category: b.category,
     address: b.address,
-    city: b.city,
+    location: b.location,
     state: b.state,
     zip_code: b.zipCode,
     phone: b.phone,
