@@ -14,9 +14,9 @@ interface BusinessDBRow {
   email: string;
   website: string;
   description: string;
-  rating: number;
-  review_count: number;
-  price_range: string;
+  rating: number | null;
+  review_count: number | null;
+  price_range: string | null;
   image_url: string;
   image_filename?: string;
   latitude: number;
@@ -225,6 +225,12 @@ function transformBusinessFromDB(row: BusinessDBRow): Business {
   console.log('Hours for', row.name, ':', row.hours);
   const isOpen = isBusinessOpen(row.hours);
   console.log('isOpen calculated:', isOpen);
+
+  // Handle string "null" as actual null
+  const rating = row.rating === null || row.rating === undefined ? null : row.rating;
+  const reviewCount = row.review_count === null || row.review_count === undefined ? null : row.review_count;
+  const priceRange = row.price_range === null || row.price_range === undefined || row.price_range === 'null' ? null : row.price_range as Business['priceRange'];
+
   return {
     id: row.id,
     name: row.name,
@@ -237,9 +243,9 @@ function transformBusinessFromDB(row: BusinessDBRow): Business {
     email: row.email,
     website: row.website,
     description: row.description,
-    rating: row.rating,
-    reviewCount: row.review_count,
-    priceRange: row.price_range as Business['priceRange'],
+    rating: rating,
+    reviewCount: reviewCount,
+    priceRange: priceRange,
     imageUrl: row.image_filename || row.image_url, // Use image_filename if available, else image_url
     imageFilename: row.image_filename,
     latitude: row.latitude,

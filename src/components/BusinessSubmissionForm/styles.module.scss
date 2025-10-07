@@ -22,10 +22,59 @@
   max-height: 90vh;
   overflow-y: auto;
   width: 90%;
+}
+
+.modalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: variables.$spacing-lg;
+  padding-bottom: variables.$spacing-md;
+  //border-bottom: 1px solid variables.$secondary-color;
 
   h2 {
-    margin-top: 0;
+    margin: 0;
     color: variables.$dark-color;
+  }
+}
+
+.closeButton {
+  background: rgba(gray,0.1);
+  border: none;
+  font-size: 2rem;
+  color: variables.$secondary-color;
+  cursor: pointer;
+  padding: 0;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: background-color 0.2s, color 0.2s;
+
+  &:hover {
+    background: variables.$secondary-color;
+    color: variables.$white;
+  }
+
+  &:focus {
+    outline: 2px solid variables.$primary-color;
+    outline-offset: 2px;
+  }
+}
+
+.errorMessages {
+  background: variables.$danger-color;
+  color: variables.$white;
+  padding: variables.$spacing-sm variables.$spacing-md;
+  border-radius: variables.$border-radius;
+  margin-bottom: variables.$spacing-md;
+
+  .error {
+    margin: 0;
+    font-size: 0.875rem;
+    font-weight: 500;
   }
 }
 
@@ -107,6 +156,33 @@
   overflow: hidden;
 }
 
+.imageUploadOptions {
+  display: flex;
+  gap: variables.$spacing-sm;
+  margin-bottom: variables.$spacing-sm;
+}
+
+.uploadOption {
+  flex: 1;
+}
+
+.uploadButton {
+  display: inline-block;
+  padding: variables.$spacing-sm variables.$spacing-md;
+  background: variables.$primary-color;
+  color: variables.$white !important;
+  border: none;
+  border-radius: variables.$border-radius;
+  cursor: pointer;
+  font-size: 0.875rem;
+  text-align: center;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background: variables.$primary-hover-color;
+  }
+}
+
 .imagePreview {
   max-width: 200px;
   max-height: 200px;
@@ -115,19 +191,42 @@
   border: 1px solid variables.$secondary-color;
 }
 
-.hourRow {
-  display: flex;
-  align-items: center;
-  gap: variables.$spacing-sm;
-  margin-bottom: variables.$spacing-xs;
+.dayHours {
+  margin-bottom: variables.$spacing-md;
+  padding: variables.$spacing-sm;
+  border: 1px solid variables.$secondary-color;
+  border-radius: variables.$border-radius;
+  background: variables.$white;
 
-  span {
-    min-width: 100px;
+  .dayLabel {
+    display: flex;
+    align-items: center;
+    gap: variables.$spacing-sm;
     font-weight: 500;
+    margin-bottom: variables.$spacing-sm;
+    cursor: pointer;
+
+    input[type="checkbox"] {
+      margin: 0;
+    }
   }
 
-  input {
-    flex: 1;
+  .timeSelectors {
+    display: flex;
+    align-items: center;
+    gap: variables.$spacing-sm;
+
+    select {
+      padding: variables.$spacing-xs;
+      border: 1px solid variables.$secondary-color;
+      border-radius: variables.$border-radius;
+      font-size: 0.875rem;
+    }
+
+    .timeSeparator {
+      color: variables.$secondary-color;
+      font-weight: 500;
+    }
   }
 }
 

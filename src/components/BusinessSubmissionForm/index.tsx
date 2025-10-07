@@ -17,15 +17,21 @@ interface BusinessFormData {
   email: string;
   website: string;
   description: string;
-  priceRange: '$' | '$$' | '$$$' | '$$$$';
+  priceRange: '$' | '$$' | '$$$' | '$$$$' | null;
   imageUrl: string;
   imageFilename?: string;
   latitude: number;
   longitude: number;
   hours: Record<string, string>;
   tags: string[];
-  rating: number;
-  reviewCount: number;
+  rating: number | null;
+  reviewCount: number | null;
+}
+
+interface DayHours {
+  isOpen: boolean;
+  openTime: string;
+  closeTime: string;
 }
 
 interface BusinessSubmissionFormProps {
@@ -48,9 +54,9 @@ const strings = {
     city: 'Ciudad',
     state: 'Estado',
     zipCode: 'Código Postal',
-    phone: 'Teléfono',
+    phone: 'Teléfono/Whatsapp',
     email: 'Correo Electrónico',
-    website: 'Sitio Web',
+    website: 'Sitio Web o Red Social',
     description: 'Descripción',
     priceRange: 'Rango de Precios',
     imageUrl: 'Imagen',
@@ -69,6 +75,23 @@ const categoryDefaultImages: Record<BusinessCategory, string> = {
   otros: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=400'
 };
 
+// Generate time options from 12:00 AM to 11:30 PM in 30-minute intervals
+const generateTimeOptions = () => {
+  const options = [];
+  for (let hour = 0; hour < 24; hour++) {
+    for (let minute = 0; minute < 60; minute += 30) {
+      const time24 = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
+      const period = hour < 12 ? 'AM' : 'PM';
+      const hour12 = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour;
+      const time12 = `${hour12}:${minute.toString().padStart(2, '0')} ${period}`;
+      options.push({ value: time24, label: time12 });
+    }
+  }
+  return options;
+};
+
+const timeOptions = generateTimeOptions();
+
 const BusinessSubmissionForm: React.FC<BusinessSubmissionFormProps> = ({ onSubmit, onClose }) => {
   const [formData, setFormData] = useState<BusinessFormData>({
     name: '',
@@ -81,7 +104,7 @@ const BusinessSubmissionForm: React.FC<BusinessSubmissionFormProps> = ({ onSubmi
     email: '',
     website: '',
     description: '',
-    priceRange: '$',
+    priceRange: null,
     imageUrl: '',
     imageFilename: undefined,
     latitude: 0,
@@ -96,13 +119,25 @@ const BusinessSubmissionForm: React.FC<BusinessSubmissionFormProps> = ({ onSubmi
       Sunday: 'Closed'
     },
     tags: [],
-    rating: 0,
-    reviewCount: 0
+    rating: null,
+    reviewCount: null
   });
 
   const [useMap, setUseMap] = useState(false);
   const [locationError, setLocationError] = useState('');
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
+  const [validationErrors, setValidationErrors] = useState<string[]>([]);
+
+  // State for day hours
+  const [dayHours, setDayHours] = useState<Record<string, DayHours>>({
+    Lunes: { isOpen: true, openTime: '09:00', closeTime: '17:00' },
+    Martes: { isOpen: true, openTime: '09:00', closeTime: '17:00' },
+    Miércoles: { isOpen: true, openTime: '09:00', closeTime: '17:00' },
+    Jueves: { isOpen: true, openTime: '09:00', closeTime: '17:00' },
+    Viernes: { isOpen: true, openTime: '09:00', closeTime: '17:00' },
+    Sábado: { isOpen: true, openTime: '09:00', closeTime: '17:00' },
+    Domingo: { isOpen: false, openTime: '09:00', closeTime: '17:00' }
+  });
 
   useEffect(() => {
     if (!uploadedImage) {
@@ -117,10 +152,17 @@ const BusinessSubmissionForm: React.FC<BusinessSubmissionFormProps> = ({ onSubmi
   };
 
 
-  const handleHoursChange = (day: string, value: string) => {
-    setFormData(prev => ({
+  const handleDayToggle = (day: string, isOpen: boolean) => {
+    setDayHours(prev => ({
       ...prev,
-      hours: { ...prev.hours, [day]: value }
+      [day]: { ...prev[day], isOpen }
+    }));
+  };
+
+  const handleTimeChange = (day: string, field: 'openTime' | 'closeTime', value: string) => {
+    setDayHours(prev => ({
+      ...prev,
+      [day]: { ...prev[day], [field]: value }
     }));
   };
 
@@ -170,7 +212,38 @@ const BusinessSubmissionForm: React.FC<BusinessSubmissionFormProps> = ({ onSubmi
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit(formData);
+    setValidationErrors([]);
+
+    // Check if at least one day is open
+    const hasOpenDay = Object.values(dayHours).some(day => day.isOpen);
+    if (!hasOpenDay) {
+      setValidationErrors(['Debe seleccionar al menos un día de apertura']);
+      return;
+    }
+
+    // Convert dayHours to string format
+    const hours: Record<string, string> = {};
+    Object.entries(dayHours).forEach(([day, dayData]) => {
+      if (dayData.isOpen) {
+        const openTime12 = formatTime12(dayData.openTime);
+        const closeTime12 = formatTime12(dayData.closeTime);
+        hours[day] = `${openTime12} - ${closeTime12}`;
+      } else {
+        hours[day] = 'Closed';
+      }
+    });
+
+    const dataToSubmit = { ...formData, hours };
+    onSubmit(dataToSubmit);
+  };
+
+  // Helper function to format 24h time to 12h
+  const formatTime12 = (time24: string) => {
+    const [hourStr, minute] = time24.split(':');
+    const hour = parseInt(hourStr);
+    const period = hour < 12 ? 'AM' : 'PM';
+    const hour12 = hour === 0 ? 12 : hour > 12 ? hour - 12 : hour;
+    return `${hour12}:${minute} ${period}`;
   };
 
   function MapClickHandler() {
@@ -183,26 +256,45 @@ const BusinessSubmissionForm: React.FC<BusinessSubmissionFormProps> = ({ onSubmi
   return (
     <div className={styles.modal}>
       <div className={styles.modalContent}>
-        <h2>{strings.title}</h2>
+        <div className={styles.modalHeader}>
+          <h2>{strings.title}</h2>
+          <button
+            type="button"
+            onClick={onClose}
+            className={styles.closeButton}
+            aria-label="Cerrar"
+          >
+            ×
+          </button>
+        </div>
+        {validationErrors.length > 0 && (
+          <div className={styles.errorMessages}>
+            {validationErrors.map((error, index) => (
+              <p key={index} className={styles.error}>{error}</p>
+            ))}
+          </div>
+        )}
         <form onSubmit={handleSubmit} className={styles.form}>
           <div className={styles.field}>
-            <label>{strings.fields.name}</label>
+            <label>{strings.fields.name} *</label>
             <input
               type="text"
               name="name"
               value={formData.name}
               onChange={handleInputChange}
               required
+              title="Este campo es obligatorio"
             />
           </div>
 
           <div className={styles.field}>
-            <label>{strings.fields.category}</label>
+            <label>{strings.fields.category} *</label>
             <select
               name="category"
               value={formData.category}
               onChange={handleInputChange}
               required
+              title="Este campo es obligatorio"
             >
               {Object.entries(BUSINESS_CATEGORIES).map(([key, label]) => (
                 <option key={key} value={key}>{label}</option>
@@ -211,13 +303,14 @@ const BusinessSubmissionForm: React.FC<BusinessSubmissionFormProps> = ({ onSubmi
           </div>
 
           <div className={styles.field}>
-            <label>{strings.fields.address}</label>
+            <label>{strings.fields.address} *</label>
             <input
               type="text"
               name="address"
               value={formData.address}
               onChange={handleInputChange}
               required
+              title="Este campo es obligatorio"
             />
           </div>
 
@@ -253,13 +346,15 @@ const BusinessSubmissionForm: React.FC<BusinessSubmissionFormProps> = ({ onSubmi
           </div>
 
           <div className={styles.field}>
-            <label>{strings.fields.phone}</label>
+            <label>{strings.fields.phone} *</label>
             <input
               type="tel"
               name="phone"
               value={formData.phone}
               onChange={handleInputChange}
               required
+              pattern="[0-9]{10}"
+              title="El teléfono debe tener exactamente 10 dígitos numéricos"
             />
           </div>
 
@@ -270,7 +365,6 @@ const BusinessSubmissionForm: React.FC<BusinessSubmissionFormProps> = ({ onSubmi
               name="email"
               value={formData.email}
               onChange={handleInputChange}
-              required
             />
           </div>
 
@@ -285,23 +379,45 @@ const BusinessSubmissionForm: React.FC<BusinessSubmissionFormProps> = ({ onSubmi
           </div>
 
           <div className={styles.field}>
-            <label>{strings.fields.description}</label>
+            <label>{strings.fields.description} *</label>
             <textarea
               name="description"
               value={formData.description}
               onChange={handleInputChange}
               required
+              title="Este campo es obligatorio"
             />
           </div>
 
           <div className={styles.field}>
             <label>{strings.fields.imageUrl}</label>
-            <input
-              type="file"
-              accept="image/*"
-              capture="environment"
-              onChange={handleImageUpload}
-            />
+            <div className={styles.imageUploadOptions}>
+              <div className={styles.uploadOption}>
+                <label htmlFor="file-upload" className={styles.uploadButton}>
+                  📁 Subir Archivo
+                </label>
+                <input
+                  id="file-upload"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                  style={{ display: 'none' }}
+                />
+              </div>
+              <div className={styles.uploadOption}>
+                <label htmlFor="camera-capture" className={styles.uploadButton}>
+                  📷 Tomar Foto
+                </label>
+                <input
+                  id="camera-capture"
+                  type="file"
+                  accept="image/*"
+                  capture="environment"
+                  onChange={handleImageUpload}
+                  style={{ display: 'none' }}
+                />
+              </div>
+            </div>
             {uploadedImage && (
               <img src={uploadedImage} alt="Preview" className={styles.imagePreview} />
             )}
@@ -357,15 +473,41 @@ const BusinessSubmissionForm: React.FC<BusinessSubmissionFormProps> = ({ onSubmi
 
           <div className={styles.field}>
             <label>{strings.fields.hours}</label>
-            {['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'].map(day => (
-              <div key={day} className={styles.hourRow}>
-                <span>{day}</span>
-                <input
-                  type="text"
-                  placeholder="9:00 AM - 5:00 PM"
-                  value={formData.hours[day] || ''}
-                  onChange={(e) => handleHoursChange(day, e.target.value)}
-                />
+            {Object.entries(dayHours).map(([day, hours]) => (
+              <div key={day} className={styles.dayHours}>
+                <label className={styles.dayLabel}>
+                  <input
+                    type="checkbox"
+                    checked={hours.isOpen}
+                    onChange={(e) => handleDayToggle(day, e.target.checked)}
+                  />
+                  {day}
+                </label>
+                {hours.isOpen && (
+                  <div className={styles.timeSelectors}>
+                    <select
+                      value={hours.openTime}
+                      onChange={(e) => handleTimeChange(day, 'openTime', e.target.value)}
+                    >
+                      {timeOptions.map(option => (
+                        <option key={option.value} value={option.value}>
+                          {option.label}
+                        </option>
+                      ))}
+                    </select>
+                    <span className={styles.timeSeparator}>a</span>
+                    <select
+                      value={hours.closeTime}
+                      onChange={(e) => handleTimeChange(day, 'closeTime', e.target.value)}
+                    >
+                      {timeOptions.map(option => (
+                        <option key={option.value} value={option.value}>
+                          {option.label}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                )}
               </div>
             ))}
           </div>

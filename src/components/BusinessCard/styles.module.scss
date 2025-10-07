@@ -72,10 +72,35 @@
     }
   }
 
+  .priceRange {
+    color: variables.$primary-color;
+    font-weight: 500;
+    margin-bottom: variables.$spacing-sm;
+    font-size: 0.875rem;
+  }
+
   .address {
     color: variables.$secondary-color;
     font-size: 0.875rem;
     margin-bottom: variables.$spacing-sm;
+  }
+
+  .contact {
+    display: flex;
+    align-items: center;
+    gap: variables.$spacing-xs;
+    margin-bottom: variables.$spacing-sm;
+
+    .whatsappIcon {
+      height: 1.5rem;
+      width: auto;
+    }
+
+    .phoneNumber {
+      color: variables.$primary-color;
+      font-size: 0.875rem;
+      font-weight: 500;
+    }
   }
 
   .description {
