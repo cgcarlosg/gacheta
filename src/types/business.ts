@@ -34,6 +34,8 @@ export type BusinessCategory =
   | 'servicios'
   | 'salud'
   | 'entretenimiento'
+  | 'iglesia'
+  | 'entidad_pública'
   | 'otros';
 
 export interface FilterOptions {

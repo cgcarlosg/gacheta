@@ -73,6 +73,8 @@ const categoryDefaultImages: Record<BusinessCategory, string> = {
   servicios: 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=400',
   salud: 'https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=400',
   entretenimiento: 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=400',
+  iglesia: 'https://images.unsplash.com/photo-1507692049790-de58290a4354?w=400',
+  entidad_pública: 'https://images.unsplash.com/photo-1583608205776-bfd35f0d9f83?w=400',
   otros: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=400'
 };
 
@@ -96,7 +98,7 @@ const timeOptions = generateTimeOptions();
 const BusinessSubmissionForm: React.FC<BusinessSubmissionFormProps> = ({ onSubmit, onClose }) => {
   const [formData, setFormData] = useState<BusinessFormData>({
     name: '',
-    category: 'otros' as BusinessCategory,
+    category: '' as BusinessCategory,
     address: '',
     location: '',
     state: 'Cundinamarca',
@@ -144,7 +146,7 @@ const BusinessSubmissionForm: React.FC<BusinessSubmissionFormProps> = ({ onSubmi
   });
 
   useEffect(() => {
-    if (!uploadedImage) {
+    if (!uploadedImage && formData.category) {
       const defaultImage = categoryDefaultImages[formData.category];
       setFormData(prev => ({ ...prev, imageUrl: defaultImage, imageFilename: undefined }));
     }
@@ -340,6 +342,7 @@ const BusinessSubmissionForm: React.FC<BusinessSubmissionFormProps> = ({ onSubmi
               required
               title="Este campo es obligatorio"
             >
+              <option value="" disabled>Seleccione</option>
               {Object.entries(BUSINESS_CATEGORIES).map(([key, label]) => (
                 <option key={key} value={key}>{label}</option>
               ))}
@@ -471,8 +474,8 @@ const BusinessSubmissionForm: React.FC<BusinessSubmissionFormProps> = ({ onSubmi
             {uploadedImage && (
               <img src={uploadedImage} alt="Preview" className={styles.imagePreview} />
             )}
-            {!uploadedImage && (
-              <p>Si no subes una foto, se usará una imagen por defecto para la categoría {formData.category}.</p>
+            {!uploadedImage && formData.category && (
+              <p>Si no subes una foto, se usará una imagen por defecto para la categoría {BUSINESS_CATEGORIES[formData.category as keyof typeof BUSINESS_CATEGORIES]}.</p>
             )}
           </div>
 

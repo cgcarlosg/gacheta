@@ -2,7 +2,7 @@ import React, { useRef } from 'react';
 import { Link } from 'react-router-dom';
 import type { Business } from '../../types/business';
 import { useIntersectionObserver } from '../../utils/helpers';
-import { CATEGORY_ICONS } from '../../utils/constants';
+import { CATEGORY_ICONS, CATEGORY_DEFAULT_IMAGES } from '../../utils/constants';
 import styles from './styles.module.scss';
 import whatsapp from '../../assets/whatsappic.png'
 
@@ -13,12 +13,13 @@ interface BusinessCardProps {
 }
 
 const BusinessCard: React.FC<BusinessCardProps> = React.memo(({ business, hasRatings, hasPriceRanges }) => {
-  const [imageSrc, setImageSrc] = React.useState(business.imageUrl || 'https://picsum.photos/300/200?random=1');
+  const defaultImage = CATEGORY_DEFAULT_IMAGES[business.category as keyof typeof CATEGORY_DEFAULT_IMAGES] || 'https://picsum.photos/300/200?random=1';
+  const [imageSrc, setImageSrc] = React.useState(business.imageUrl || defaultImage);
   const imageRef = useRef<HTMLImageElement>(null);
   const isVisible = useIntersectionObserver(imageRef);
 
   const handleImageError = () => {
-    setImageSrc('https://picsum.photos/300/200?random=1');
+    setImageSrc(defaultImage);
   };
 
   const renderStars = (rating: number) => {
