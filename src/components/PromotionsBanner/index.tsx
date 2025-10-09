@@ -9,6 +9,35 @@ const strings = {
   moreInfo: 'Más información'
 };
 
+const defaultPromotions = [
+  {
+    id: 'default-1',
+    title: '¡Publica tu negocio gratis!',
+    description: 'Registra tu negocio en nuestro directorio local sin costo alguno. Haz clic en "Agregue su negocio" en la parte superior.',
+    imageUrl: undefined,
+    linkUrl: undefined,
+    isActive: true,
+    startDate: '',
+    endDate: undefined,
+    priority: 0,
+    createdAt: '',
+    updatedAt: ''
+  },
+  {
+    id: 'default-2',
+    title: 'Solicitudes especiales',
+    description: 'Usa el chat para hacer solicitudes especiales al administrador de la página. ¡Estamos aquí para ayudarte!',
+    imageUrl: undefined,
+    linkUrl: undefined,
+    isActive: true,
+    startDate: '',
+    endDate: undefined,
+    priority: 0,
+    createdAt: '',
+    updatedAt: ''
+  }
+];
+
 const PromotionsBanner: React.FC = () => {
   const [promotions, setPromotions] = useState<Promotion[]>([]);
   const [loading, setLoading] = useState(true);
@@ -18,9 +47,14 @@ const PromotionsBanner: React.FC = () => {
     const fetchPromotions = async () => {
       try {
         const activePromotions = await getActivePromotions();
-        setPromotions(activePromotions);
+        if (activePromotions.length === 0) {
+          setPromotions(defaultPromotions);
+        } else {
+          setPromotions(activePromotions);
+        }
       } catch {
-        // Error handled silently
+        // Error handled silently, fall back to defaults
+        setPromotions(defaultPromotions);
       } finally {
         setLoading(false);
       }
@@ -41,17 +75,6 @@ const PromotionsBanner: React.FC = () => {
 
   if (loading) {
     return <div className={styles.banner}>{strings.loading}</div>;
-  }
-
-  if (promotions.length === 0) {
-    return (
-      <div className={styles.banner}>
-        <div className={styles.content}>
-          <h3>{strings.defaultTitle}</h3>
-          <p>{strings.defaultDescription}</p>
-        </div>
-      </div>
-    );
   }
 
   const currentPromotion = promotions[currentIndex];
