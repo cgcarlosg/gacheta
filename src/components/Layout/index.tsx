@@ -11,7 +11,7 @@ const ChatWidget = lazy(() => import('../ChatWidget'));
 const BusinessSubmissionForm = lazy(() => import('../BusinessSubmissionForm'));
 
 const strings = {
-  title: 'Directorio de Negocios',
+  title: 'Directorio Gachetá',
   filters: 'Filtros',
   openFilters: 'Abrir filtros',
   closeFilters: 'Cerrar filtros',

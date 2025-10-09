@@ -6,7 +6,7 @@ import PromotionsBanner from '../../components/PromotionsBanner';
 import styles from './styles.module.scss';
 
 const strings = {
-  title: 'Negocios Locales'
+  title: 'Comercio local'
 };
 
 const HomePage: React.FC = () => {
