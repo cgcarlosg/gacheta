@@ -13,7 +13,7 @@ interface BusinessDBRow {
   phone: string;
   email: string;
   website: string;
-  description: string;
+  description?: string;
   rating: number | null;
   review_count: number | null;
   price_range: string | null;
@@ -23,16 +23,16 @@ interface BusinessDBRow {
   longitude: number;
   hours: Record<string, string>;
   is_open: boolean;
-  tags: string[];
-  special_request: string | null;
+  tags?: string[];
+  special_request?: string | null;
   is_approved: boolean;
   created_at: string;
 }
 
 export const getBusinesses = async (filters?: FilterOptions): Promise<Business[]> => {
 
-  // Select only the columns we actually need to reduce data transfer
-  const columns = 'id,name,category,address,location,state,zip_code,phone,email,website,description,rating,review_count,price_range,image_url,image_filename,latitude,longitude,hours,is_open,tags,special_request,is_approved,created_at';
+  // Select only the columns we actually need to reduce data transfer - temporarily removed large columns
+  const columns = 'id,name,category,address,location,state,zip_code,phone,email,website,rating,review_count,price_range,image_url,image_filename,latitude,longitude,hours,is_open,is_approved,created_at';
   let query = supabase.from('businesses').select(columns).eq('is_approved', true);
 
   if (filters) {
@@ -40,7 +40,7 @@ export const getBusinesses = async (filters?: FilterOptions): Promise<Business[]
       query = query.eq('category', filters.category);
     }
     if (filters.location) {
-      query = query.ilike('location', `%${filters.location}%`);
+      query = query.eq('location', filters.location);
     }
     if (filters.rating) {
       query = query.gte('rating', filters.rating);
@@ -48,15 +48,16 @@ export const getBusinesses = async (filters?: FilterOptions): Promise<Business[]
     if (filters.priceRange) {
       query = query.eq('price_range', filters.priceRange);
     }
-    if (filters.searchQuery) {
-      const searchQuery = filters.searchQuery.toLowerCase();
-      // Simplified search - removed expensive tags JSON search
-      query = query.or(`name.ilike.%${searchQuery}%,description.ilike.%${searchQuery}%,category.ilike.%${searchQuery}%`);
-    }
+    // Temporarily disabled search to debug timeout
+    // if (filters.searchQuery) {
+    //   const searchQuery = filters.searchQuery.toLowerCase();
+    //   // Optimized search - only search name and category to avoid timeout
+    //   query = query.or(`name.ilike.%${searchQuery}%,category.ilike.%${searchQuery}%`);
+    // }
   }
 
   // Add reasonable limit to prevent timeout
-  query = query.limit(20);
+  query = query.limit(10); // Reduced limit temporarily
 
   const { data, error } = await query;
 
@@ -211,7 +212,6 @@ function transformBusinessFromDB(row: BusinessDBRow): Business {
   const rating = row.rating === null || row.rating === undefined ? null : row.rating;
   const reviewCount = row.review_count === null || row.review_count === undefined ? null : row.review_count;
   const priceRange = row.price_range === null || row.price_range === undefined || row.price_range === 'null' ? null : row.price_range as Business['priceRange'];
-  const specialRequest = row.special_request === null ? undefined : row.special_request;
 
   return {
     id: row.id,
@@ -224,7 +224,7 @@ function transformBusinessFromDB(row: BusinessDBRow): Business {
     phone: row.phone,
     email: row.email,
     website: row.website,
-    description: row.description,
+    description: row.description || '',
     rating: rating,
     reviewCount: reviewCount,
     priceRange: priceRange,
@@ -234,8 +234,8 @@ function transformBusinessFromDB(row: BusinessDBRow): Business {
     longitude: row.longitude,
     hours: row.hours,
     isOpen: isOpen,
-    tags: row.tags,
-    specialRequest: specialRequest,
+    tags: row.tags || [],
+    specialRequest: row.special_request || undefined,
     isApproved: row.is_approved,
     createdAt: row.created_at
   };

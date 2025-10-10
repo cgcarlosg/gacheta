@@ -32,7 +32,7 @@ export const useBusinessStore = create<BusinessState>((set, get) => ({
       set({
         businesses,
         loading: false,
-        hasMore: businesses.length === 20, // Assuming 20 is the limit
+        hasMore: businesses.length === 20,
         currentPage: page
       });
     } catch {
@@ -44,16 +44,14 @@ export const useBusinessStore = create<BusinessState>((set, get) => ({
     const nextPage = currentPage + 1;
     set({ loading: true });
     try {
-      // For now, we'll just fetch again with the same filters
-      // In a real implementation, you'd pass the page number to getBusinesses
+  
       const newBusinesses = await getBusinesses();
-      // Deduplicate by ID to prevent duplicate keys in React
       const existingIds = new Set(businesses.map(b => b.id));
       const filteredNewBusinesses = newBusinesses.filter(b => !existingIds.has(b.id));
       set({
         businesses: [...businesses, ...filteredNewBusinesses],
         loading: false,
-        hasMore: newBusinesses.length === 20,
+        hasMore: newBusinesses.length === 10,
         currentPage: nextPage
       });
     } catch {

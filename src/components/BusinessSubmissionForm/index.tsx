@@ -95,6 +95,8 @@ const generateTimeOptions = () => {
 
 const timeOptions = generateTimeOptions();
 
+const daysOfWeek = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
+
 const BusinessSubmissionForm: React.FC<BusinessSubmissionFormProps> = ({ onSubmit, onClose }) => {
   const [formData, setFormData] = useState<BusinessFormData>({
     name: '',
@@ -135,15 +137,14 @@ const BusinessSubmissionForm: React.FC<BusinessSubmissionFormProps> = ({ onSubmi
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // State for day hours
-  const [dayHours, setDayHours] = useState<Record<string, DayHours>>({
-    Lunes: { isOpen: true, openTime: '09:00', closeTime: '17:00' },
-    Martes: { isOpen: true, openTime: '09:00', closeTime: '17:00' },
-    Miércoles: { isOpen: true, openTime: '09:00', closeTime: '17:00' },
-    Jueves: { isOpen: true, openTime: '09:00', closeTime: '17:00' },
-    Viernes: { isOpen: true, openTime: '09:00', closeTime: '17:00' },
-    Sábado: { isOpen: true, openTime: '09:00', closeTime: '17:00' },
-    Domingo: { isOpen: false, openTime: '09:00', closeTime: '17:00' }
-  });
+  const initialDayHours = daysOfWeek.reduce((acc, day) => {
+    acc[day] = { isOpen: day !== 'Dom', openTime: '09:00', closeTime: '17:00' };
+    return acc;
+  }, {} as Record<string, DayHours>);
+
+  const [dayHours, setDayHours] = useState<Record<string, DayHours>>(initialDayHours);
+
+  const [is24Hours, setIs24Hours] = useState(false);
 
   useEffect(() => {
     if (!uploadedImage && formData.category) {
@@ -151,6 +152,16 @@ const BusinessSubmissionForm: React.FC<BusinessSubmissionFormProps> = ({ onSubmi
       setFormData(prev => ({ ...prev, imageUrl: defaultImage, imageFilename: undefined }));
     }
   }, [formData.category, uploadedImage]);
+
+  useEffect(() => {
+    if (is24Hours) {
+      const updatedDayHours: Record<string, DayHours> = {};
+      daysOfWeek.forEach(day => {
+        updatedDayHours[day] = { isOpen: true, openTime: '00:00', closeTime: '23:59' };
+      });
+      setDayHours(updatedDayHours);
+    }
+  }, [is24Hours]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -246,10 +257,15 @@ const BusinessSubmissionForm: React.FC<BusinessSubmissionFormProps> = ({ onSubmi
       errors.location = 'Debe seleccionar una ubicación en el mapa';
     }
 
+    // Image validation
+    if (!uploadedImage) {
+      errors.imageUrl = 'Debe subir una imagen del negocio';
+    }
+
     // Hours validation
     const hasOpenDay = Object.values(dayHours).some(day => day.isOpen);
-    if (!hasOpenDay) {
-      generalErrs.push('Debe seleccionar al menos un día de apertura');
+    if (!is24Hours && !hasOpenDay) {
+      generalErrs.push('Debe seleccionar al menos un día de apertura o marcar como abierto 24 horas');
     }
 
     setFieldErrors(errors);
@@ -266,15 +282,21 @@ const BusinessSubmissionForm: React.FC<BusinessSubmissionFormProps> = ({ onSubmi
       try {
         // Convert dayHours to string format
         const hours: Record<string, string> = {};
-        Object.entries(dayHours).forEach(([day, dayData]) => {
-          if (dayData.isOpen) {
-            const openTime12 = formatTime12(dayData.openTime);
-            const closeTime12 = formatTime12(dayData.closeTime);
-            hours[day] = `${openTime12} - ${closeTime12}`;
-          } else {
-            hours[day] = 'Closed';
-          }
-        });
+        if (is24Hours) {
+          daysOfWeek.forEach(day => {
+            hours[day] = '24 horas';
+          });
+        } else {
+          Object.entries(dayHours).forEach(([day, dayData]) => {
+            if (dayData.isOpen) {
+              const openTime12 = formatTime12(dayData.openTime);
+              const closeTime12 = formatTime12(dayData.closeTime);
+              hours[day] = `${openTime12} - ${closeTime12}`;
+            } else {
+              hours[day] = 'Closed';
+            }
+          });
+        }
 
         const dataToSubmit = { ...formData, hours };
         await onSubmit(dataToSubmit);
@@ -443,7 +465,7 @@ const BusinessSubmissionForm: React.FC<BusinessSubmissionFormProps> = ({ onSubmi
           </div>
 
           <div className={styles.field}>
-            <label>{strings.fields.imageUrl}</label>
+            <label>{strings.fields.imageUrl} *</label>
             <div className={styles.imageUploadOptions}>
               <div className={styles.uploadOption}>
                 <label htmlFor="file-upload" className={styles.uploadButton}>
@@ -457,19 +479,6 @@ const BusinessSubmissionForm: React.FC<BusinessSubmissionFormProps> = ({ onSubmi
                   style={{ display: 'none' }}
                 />
               </div>
-              <div className={styles.uploadOption}>
-                <label htmlFor="camera-capture" className={styles.uploadButton}>
-                  📷 Tomar Foto
-                </label>
-                <input
-                  id="camera-capture"
-                  type="file"
-                  accept="image/*"
-                  capture="environment"
-                  onChange={handleImageUpload}
-                  style={{ display: 'none' }}
-                />
-              </div>
             </div>
             {uploadedImage && (
               <img src={uploadedImage} alt="Preview" className={styles.imagePreview} />
@@ -477,6 +486,7 @@ const BusinessSubmissionForm: React.FC<BusinessSubmissionFormProps> = ({ onSubmi
             {!uploadedImage && formData.category && (
               <p>Si no subes una foto, se usará una imagen por defecto para la categoría {BUSINESS_CATEGORIES[formData.category as keyof typeof BUSINESS_CATEGORIES]}.</p>
             )}
+            {fieldErrors.imageUrl && <p className={styles.fieldError}>{fieldErrors.imageUrl}</p>}
           </div>
 
           <div className={styles.field}>
@@ -527,43 +537,56 @@ const BusinessSubmissionForm: React.FC<BusinessSubmissionFormProps> = ({ onSubmi
 
           <div className={styles.field}>
             <label>{strings.fields.hours}</label>
-            {Object.entries(dayHours).map(([day, hours]) => (
-              <div key={day} className={styles.dayHours}>
-                <label className={styles.dayLabel}>
-                  <input
-                    type="checkbox"
-                    checked={hours.isOpen}
-                    onChange={(e) => handleDayToggle(day, e.target.checked)}
-                  />
-                  {day}
-                </label>
-                {hours.isOpen && (
-                  <div className={styles.timeSelectors}>
-                    <select
-                      value={hours.openTime}
-                      onChange={(e) => handleTimeChange(day, 'openTime', e.target.value)}
-                    >
-                      {timeOptions.map(option => (
-                        <option key={option.value} value={option.value}>
-                          {option.label}
-                        </option>
-                      ))}
-                    </select>
-                    <span className={styles.timeSeparator}>a</span>
-                    <select
-                      value={hours.closeTime}
-                      onChange={(e) => handleTimeChange(day, 'closeTime', e.target.value)}
-                    >
-                      {timeOptions.map(option => (
-                        <option key={option.value} value={option.value}>
-                          {option.label}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                )}
-              </div>
-            ))}
+            <div className={styles.hoursOption}>
+              <label>
+                <input
+                  type="checkbox"
+                  checked={is24Hours}
+                  onChange={(e) => setIs24Hours(e.target.checked)}
+                />
+                Abierto 24 horas
+              </label>
+            </div>
+            {!is24Hours && daysOfWeek.map(day => {
+              const hours = dayHours[day];
+              return (
+                <div key={day} className={styles.dayHours}>
+                  <label className={styles.dayLabel}>
+                    <input
+                      type="checkbox"
+                      checked={hours.isOpen}
+                      onChange={(e) => handleDayToggle(day, e.target.checked)}
+                    />
+                    {day}
+                  </label>
+                  {hours.isOpen && (
+                    <div className={styles.timeSelectors}>
+                      <select
+                        value={hours.openTime}
+                        onChange={(e) => handleTimeChange(day, 'openTime', e.target.value)}
+                      >
+                        {timeOptions.map(option => (
+                          <option key={option.value} value={option.value}>
+                            {option.label}
+                          </option>
+                        ))}
+                      </select>
+                      <span className={styles.timeSeparator}>a</span>
+                      <select
+                        value={hours.closeTime}
+                        onChange={(e) => handleTimeChange(day, 'closeTime', e.target.value)}
+                      >
+                        {timeOptions.map(option => (
+                          <option key={option.value} value={option.value}>
+                            {option.label}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </div>
 
           <div className={styles.field}>

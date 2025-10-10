@@ -20,13 +20,13 @@ export const mockBusinesses: Business[] = [
     latitude: 4.817972,
     longitude: -73.637278,
     hours: {
-      Lunes: '11:00 AM - 10:00 PM',
-      Martes: '11:00 AM - 10:00 PM',
-      Miercoles: '11:00 AM - 10:00 PM',
-      Jueves: '11:00 AM - 10:00 PM',
-      Viernes: '11:00 AM - 11:00 PM',
-      Sabado: '12:00 PM - 11:00 PM',
-      Domingo: '12:00 PM - 9:00 PM'
+      Lun: '11:00 AM - 10:00 PM',
+      Mar: '11:00 AM - 10:00 PM',
+      Mie: '11:00 AM - 10:00 PM',
+      Jue: '11:00 AM - 10:00 PM',
+      Vie: '11:00 AM - 11:00 PM',
+      Sab: '12:00 PM - 11:00 PM',
+      Dom: '12:00 PM - 9:00 PM'
     },
     isOpen: true,
     isApproved: false,

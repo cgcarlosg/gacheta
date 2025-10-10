@@ -212,6 +212,8 @@
 }
 
 .dayHours {
+  display: flex;
+  justify-content: space-between;
   margin-bottom: variables.$spacing-md;
   padding: variables.$spacing-sm;
   border: 1px solid variables.$secondary-color;
